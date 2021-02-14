@@ -14,7 +14,7 @@ defined('ABSPATH') || die();
 //
 // Define constants used by this plugin.
 //
-define('KONTAKT_STORE_MESSAGES', true);
+define('KONTAKT_STORE_MESSAGES', false);
 
 //
 // Register message custom post type.
