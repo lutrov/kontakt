@@ -1,0 +1,196 @@
+# Copyright (c) 2020 Ivan Lutrov
+# This file is distributed under the GPL-3.0.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Kontakt 2.2\n"
+"POT-Creation-Date: 2020-11-19 16:28+1100\n"
+"PO-Revision-Date: 2020-11-19 16:28+1000\n"
+"Last-Translator: Ivan Lutrov <ivan@lutrov.com>\n"
+"Language: en\n"
+"Language-Team: Ivan Lutrov <ivan@lutrov.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Eazy Po 0.9.5.3\n"
+
+#: kontakt.php:28 kontakt.php:31
+msgid "Contact Form Messages"
+msgstr ""
+
+#: kontakt.php:29
+msgid "Search Messages"
+msgstr ""
+
+#: kontakt.php:30
+msgid "No messages found"
+msgstr ""
+
+#: kontakt.php:63
+msgid "From"
+msgstr ""
+
+#: kontakt.php:64 kontakt.php:850 kontakt.php:859
+msgid "Message"
+msgstr ""
+
+#: kontakt.php:65 kontakt.php:895 kontakt.php:904 kontakt.php:1004
+msgid "Token"
+msgstr ""
+
+#: kontakt.php:66
+msgid "Permalink"
+msgstr ""
+
+#: kontakt.php:67
+msgid "Form"
+msgstr ""
+
+#: kontakt.php:68
+msgid "Date"
+msgstr ""
+
+#: kontakt.php:135
+msgid "Export"
+msgstr ""
+
+#: kontakt.php:174 kontakt.php:516
+msgid "NAME"
+msgstr ""
+
+#: kontakt.php:175 kontakt.php:524
+msgid "EMAIL"
+msgstr ""
+
+#: kontakt.php:176 kontakt.php:532
+msgid "TELEPHONE"
+msgstr ""
+
+#: kontakt.php:177 kontakt.php:540
+msgid "COMPANY"
+msgstr ""
+
+#: kontakt.php:178 kontakt.php:548
+msgid "MESSAGE"
+msgstr ""
+
+#: kontakt.php:179 kontakt.php:556
+msgid "TOKEN"
+msgstr ""
+
+#: kontakt.php:180 kontakt.php:563
+msgid "PERMALINK"
+msgstr ""
+
+#: kontakt.php:181 kontakt.php:569
+msgid "FORM"
+msgstr ""
+
+#: kontakt.php:182
+msgid "DATE"
+msgstr ""
+
+#: kontakt.php:226
+msgid ""
+"Messages are automatically generated from the contact form and should never "
+"be created, edited or deleted here."
+msgstr ""
+
+#: kontakt.php:240
+msgid "Recent Messages"
+msgstr ""
+
+#: kontakt.php:276
+msgid "Show all"
+msgstr ""
+
+#: kontakt.php:278
+msgid "There are no messages at this time."
+msgstr ""
+
+#: kontakt.php:361
+msgid "Name should not be empty."
+msgstr ""
+
+#: kontakt.php:367 kontakt.php:376
+msgid "Invalid name."
+msgstr ""
+
+#: kontakt.php:389
+msgid "Email should not be empty."
+msgstr ""
+
+#: kontakt.php:395 kontakt.php:404
+msgid "Invalid email."
+msgstr ""
+
+#: kontakt.php:417
+msgid "Telephone should not be empty."
+msgstr ""
+
+#: kontakt.php:423 kontakt.php:432
+msgid "Invalid telephone."
+msgstr ""
+
+#: kontakt.php:445
+msgid "Company should not be empty."
+msgstr ""
+
+#: kontakt.php:457
+msgid "Message should not be empty."
+msgstr ""
+
+#: kontakt.php:472
+msgid "Token should not be empty."
+msgstr ""
+
+#: kontakt.php:478 kontakt.php:493
+msgid "Invalid token."
+msgstr ""
+
+#: kontakt.php:484 kontakt.php:499
+msgid "Token missmatch."
+msgstr ""
+
+#: kontakt.php:581
+msgid "Contact form"
+msgstr ""
+
+#: kontakt.php:592
+msgid "Your message has been sent."
+msgstr ""
+
+#: kontakt.php:626
+msgid ""
+"A technical error occurred while trying to send your message, please try "
+"again later."
+msgstr ""
+
+#: kontakt.php:639
+msgid "There were one or more errors, please see below."
+msgstr ""
+
+#: kontakt.php:670 kontakt.php:679 kontakt.php:954
+msgid "Name"
+msgstr ""
+
+#: kontakt.php:715 kontakt.php:724 kontakt.php:964
+msgid "Email"
+msgstr ""
+
+#: kontakt.php:760 kontakt.php:769 kontakt.php:974
+msgid "Telephone"
+msgstr ""
+
+#: kontakt.php:805 kontakt.php:814 kontakt.php:984
+msgid "Company"
+msgstr ""
+
+#: kontakt.php:938
+msgid "Submit"
+msgstr ""
+
+#: kontakt.php:994
+msgid "message"
+msgstr ""
