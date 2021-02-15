@@ -6,7 +6,7 @@ Description: Kontakt is a simple contact form that allows you to capture a name,
 Plugin URI: https://github.com/lutrov/kontakt
 Author: Ivan Lutrov
 Author URI: http://lutrov.com/
-Version: 1.0
+Version: 2.0
 */
 
 defined('ABSPATH') || die();
@@ -306,7 +306,7 @@ function kontakt_make_message_fields($text) {
 
 //
 // Shortcode with name, email, message and (optional) token fields.
-// [kontakt form="1234" fields="name|email|telephone|company|message|token" required="name|email|telephone|company|message|token" subject="Contact form" cc="hello@example.com" bcc="bye@example.com" token="ABCD1234" redirect="/stage/test/thank-you" anchor="content"]
+// [kontakt form="1234" fields="name|email|telephone|company|message|token|agreement" required="name|email|telephone|company|message|token|agreement" subject="Contact form" cc="hello@example.com" bcc="bye@example.com" token="ABCD1234" agreement="privacy-policy" redirect="/stage/test/thank-you" anchor="content"]
 //
 add_shortcode('kontakt', 'kontakt_shortcode');
 add_shortcode('contact', 'kontakt_shortcode');
@@ -316,13 +316,14 @@ function kontakt_shortcode($atts) {
 	extract(shortcode_atts(
 		array(
 			'form' => null,
-			'fields' => 'name|email|telephone|company|message|token',
+			'fields' => 'name|email|telephone|company|message|token|agreement',
 			'required' => 'name|email|telephone|company|message|token',
 			'subject' => null,
 			'to' => null,
 			'cc' => null,
 			'bcc' => null,
 			'token' => null,
+			'agreement' => null,
 			'redirect' => null,
 			'anchor' => null
 		),
@@ -339,10 +340,12 @@ function kontakt_shortcode($atts) {
 	$cc = sanitize_text_field($cc);
 	$bcc = sanitize_text_field($bcc);
 	$token = sanitize_text_field($token);
+	$agreement = sanitize_text_field(agreement);
+	$redirect = sanitize_text_field($redirect);
 	$anchor = sanitize_text_field($anchor);
 	$form = array(
 		'markup' => array(),
-		'data' => array('name' => null, 'email' => null, 'telephone' => null, 'company' => null, 'message' => null, 'token' => null),
+		'data' => array('name' => null, 'email' => null, 'telephone' => null, 'company' => null, 'message' => null, 'token' => null, 'agreement' => null),
 		'errors' => array()
 	);
 	array_push(
@@ -503,6 +506,16 @@ function kontakt_shortcode($atts) {
 					}
 				}
 			}
+			if (in_array('agreement', $fields) == true) {
+				$form['data']['agreement'] = isset($_POST[sprintf('agreement-%s', $id)]) == true ? absint($_POST[sprintf('agreement-%s', $id)]) : null;
+				if (empty($form['data']['agreement']) == true) {
+					$form['errors']['agreement'] = apply_filters(
+						'kontakt_shortcode_agreement_empty',
+						__('Agreement should not be empty.', 'kontakt'),
+						$id
+					);
+				}
+			}
 			if ($sent == false) {
 				if (empty($form['errors']) == true) {
 					if (empty($to) == true) {
@@ -606,14 +619,13 @@ function kontakt_shortcode($atts) {
 							));
 						}
 						if (empty($redirect) == false) {
-							$location = trim($redirect, '/');
-							$page = get_page_by_path($location);
+							$page = get_page_by_path($redirect);
 							if (empty($page) == false) {
 								$location = get_permalink($page);
 							} else {
 								$location = get_permalink();
 							}
-							wp_safe_redirect($location);
+							wp_safe_redirect($redirect);
 							exit();
 						}
 					} else {
@@ -922,6 +934,47 @@ function kontakt_shortcode($atts) {
 					isset($form['errors']['token']) == true ? $form['errors']['token'] : null
 				)
 			);
+			array_push(
+				$form['markup'], sprintf('</div>')
+			);
+		}
+		if (in_array('agreement', $fields) == true) {
+			array_push(
+				$form['markup'],
+				'<div class="wp-block-field-agreement">'
+			);
+			if (empty($agreement) == false) {
+				$page = get_page_by_path($agreement);
+				if (empty($page) == false) {
+					$agreement = sprintf(
+						__('I agree to the terms set out in the %s page', 'kontakt'),
+						sprintf(
+							'<a href="%s" target="_blank">%s</a>',
+							get_permalink($page),
+							strtolower($page->post_title)
+						)
+					);
+					array_push(
+						$form['markup'],
+						sprintf(
+							'<label for="agreement-%s"><input type="checkbox" name="agreement-%s" id="agreement-%s" class="%s" value="1"%s> %s <span class="required">*</span></label>',
+							$id,
+							$id,
+							$id,
+							isset($form['errors']['agreement']) == true ? 'error' : null,
+							$form['data']['agreement'] == 1 ? ' checked' : null,
+							apply_filters('kontakt_shortcode_agreement_label', $agreement, $id)
+						)
+					);
+					array_push(
+						$form['markup'],
+						sprintf(
+							'<p class="error">%s</p>',
+							isset($form['errors']['agreement']) == true ? $form['errors']['agreement'] : null
+						)
+					);
+				}
+			}
 			array_push(
 				$form['markup'], sprintf('</div>')
 			);
