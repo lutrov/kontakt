@@ -15,7 +15,7 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 Kontakt uses a shortcode which can be used as a Gutenberg block or placed in a sidebar widget. Here's a usage example:
 
 ```
-[kontakt form="1234" fields="name|email|telephone|company|message|token|agreement" required="name|email|telephone|company|message|token" subject="Contact form" to="admin@example.com" cc="hello@example.com" bcc="bye@example.com" token="ABCD1234" redirect="thanks" anchor="content"]
+[kontakt form="1234" fields="name|email|telephone|company|message|token|agreement" required="name|email|telephone|company|message|token" subject="Contact form" to="admin@example.com" cc="hello@example.com" bcc="bye@example.com" token="ABCD1234" agreement="terms" redirect="thanks" anchor="content"]
 ```
 
 OR
