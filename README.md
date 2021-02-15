@@ -15,29 +15,30 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 Kontakt uses a shortcode which can be used as a Gutenberg block or placed in a sidebar widget. Here's a usage example:
 
 ```
-[kontakt form="1234" fields="name|email|telephone|company|message|token" required="name|email|telephone|company|message|token" subject="Contact form" to="admin@example.com" cc="hello@example.com" bcc="bye@example.com" token="ABCD1234" redirect="thanks" anchor="content"]
+[kontakt form="1234" fields="name|email|telephone|company|message|token|agreement" required="name|email|telephone|company|message|token" subject="Contact form" to="admin@example.com" cc="hello@example.com" bcc="bye@example.com" token="ABCD1234" redirect="thanks" anchor="content"]
 ```
 
 OR
 
 ```
-[contact form="1234" fields="name|email|telephone|company|message|token" required="name|email|telephone|company|message|token" subject="Contact form" to="admin@example.com" cc="hello@example.com" bcc="bye@example.com" token="ABCD1234" redirect="thanks" anchor="content"]
+[contact form="1234" fields="name|email|telephone|company|message|token|agreement" required="name|email|telephone|company|message|token" subject="Contact form" to="admin@example.com" cc="hello@example.com" bcc="bye@example.com" token="ABCD1234" agreement="terms" redirect="thanks" anchor="content"]
 ```
 
 Breaking down the shortcode attributes:
 
 * `form`: This is the form id and can be a numeric, alphabetic or alphanumeric string which identifies the form.
-* `fields`: This is a list of fields in use and would be one or more of name, email, telephone, company, message & token.
+* `fields`: This is a list of fields in use and would be one or more of name, email, telephone, company, message, token & agreement.
 * `required`: This is a list specifying which fields are required.
 * `subject`: This is the optional subject, and if not specified defaults to "Contact form".
 * `to`: This is the optional "to" address, and if not specified defaults to your site's admin email address.
 * `cc`: This is the optional "cc" address.
 * `bcc`: This is the optional "bcc" address.
 * `token`: This is the optional security token value that the data entered in the token field is matched against.
+* `agreement`: This is the slug of the page path which has the terms of use or the privacy policy, which is used when `agreement` is specified in the list of fields.
 * `redirect`: This is the optional slug of the page path to redirect to after successful submission.
 * `anchor`: This is the optional section on the page to anchor the form to after submission.
 
-Please note that it makes no sense to specify both `redirect` and `anchor` since they're mutually exclusive.
+Please note that `agreement` must be a valid terms and conditions or privacy policy slug, otherwise the agreement (checkbox) field won't show. Also, please note that it makes no sense to specify both `redirect` and `anchor` since they're mutually exclusive.
 
 This plugin provides an API to customise the default field labels and messages. See this example:
 
@@ -199,6 +200,24 @@ add_filter('kontakt_shortcode_token_missmatch', 'custom_kontakt_shortcode_token_
 function custom_kontakt_shortcode_token_missmatch_filter($message, $form_id) {
 	if ($form_id = '1234') {
 		$message = __('Your token does not match.');
+	}
+	return $message;
+}
+
+// ---- Customise contact form shortcode agreement field label.
+add_filter('kontakt_shortcode_agreement_label', 'custom_kontakt_shortcode_agreement_label_filter', 10, 2);
+function custom_kontakt_shortcode_agreement_label_filter($label, $form_id) {
+	if ($form_id = '1234') {
+		$label = __('I agree with the terms and conditions.');
+	}
+	return $label;
+}
+
+// ---- Customise contact form shortcode agreement field empty message.
+add_filter('kontakt_shortcode_agreement_empty', 'custom_kontakt_shortcode_agreement_empty_filter', 10, 2);
+function custom_kontakt_shortcode_agreement_empty_filter($message, $form_id) {
+	if ($form_id = '1234') {
+		$message = __('Agreement should not be empty.');
 	}
 	return $message;
 }
