@@ -1,6 +1,6 @@
 # Kontakt
 
-Kontakt is a simple contact form that allows you to capture a name, email, telephone, company, message and token. No fancy form builder, no advanced conditional logic, just the basics. Optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
+Kontakt is a simple contact form that allows you to capture a name, email, telephone, company and message. No fancy form builder, no advanced conditional logic, just the basics. Allows you to block spambots without using annoying captchas and optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
 
 ## Professional Support
 
@@ -33,7 +33,7 @@ Breaking down the shortcode attributes:
 * `to`: This is the optional "to" address, and if not specified defaults to your site's admin email address.
 * `cc`: This is the optional "cc" address.
 * `bcc`: This is the optional "bcc" address.
-* `token`: This is the optional security token value that the data entered in the token field is matched against.
+* `token`: This is the optional anti spam token value that the data entered in the token field is matched against.
 * `agreement`: This is the slug of the page path which has the terms of use or the privacy policy, which is used when `agreement` is specified in the list of fields.
 * `redirect`: This is the optional slug of the page path to redirect to after successful submission.
 * `anchor`: This is the optional section on the page to anchor the form to after submission.
