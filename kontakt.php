@@ -2,8 +2,8 @@
 
 /*
 Plugin Name: Kontakt
-Description: Kontakt is a simple contact form that allows you to capture a name, email, telephone, company, message and token. No fancy form builder, no advanced conditional logic, just the basics. Optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
 Plugin URI: https://github.com/lutrov/kontakt
+Description: Kontakt is a simple contact form that allows you to capture a name, email, telephone, company and message. No fancy form builder, no advanced conditional logic, just the basics. Allows you to block spambots without using annoying captchas and optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
 Author: Ivan Lutrov
 Author URI: http://lutrov.com/
 Version: 2.0
