@@ -340,7 +340,7 @@ function kontakt_shortcode($atts) {
 	$cc = sanitize_text_field($cc);
 	$bcc = sanitize_text_field($bcc);
 	$token = sanitize_text_field($token);
-	$agreement = sanitize_text_field(agreement);
+	$agreement = sanitize_text_field($agreement);
 	$redirect = sanitize_text_field($redirect);
 	$anchor = sanitize_text_field($anchor);
 	$form = array(
