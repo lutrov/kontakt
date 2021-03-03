@@ -1044,7 +1044,7 @@ function kontakt_shortcode($atts) {
 		if (in_array('message', $fields) == true) {
 			array_push(
 				$form['markup'],
-				sprintf('<dt>%s</dt>', apply_filters('kontakt_shortcode_message_label', __('message', 'kontakt'), $id))
+				sprintf('<dt>%s</dt>', apply_filters('kontakt_shortcode_message_label', __('Message', 'kontakt'), $id))
 			);
 			array_push(
 				$form['markup'],
