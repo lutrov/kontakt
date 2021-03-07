@@ -4,9 +4,24 @@
 Plugin Name: Kontakt
 Plugin URI: https://github.com/lutrov/kontakt
 Description: Kontakt is a simple contact form that allows you to capture a name, email, telephone, company and message. No fancy form builder, no advanced conditional logic, just the basics. Allows you to block spambots without using annoying captchas and optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
+Version: 2.0
 Author: Ivan Lutrov
 Author URI: http://lutrov.com/
-Version: 2.0
+Copyright: 2020, Ivan Lutrov
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with
+this program; if not, write to the Free Software Foundation, Inc., 51 Franklin
+Street, Fifth Floor, Boston, MA 02110-1301, USA. Also add information on how to
+contact you by electronic and paper mail.
 */
 
 defined('ABSPATH') || die();
