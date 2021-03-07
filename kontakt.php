@@ -7,6 +7,7 @@ Description: Kontakt is a simple contact form that allows you to capture a name,
 Version: 2.0
 Author: Ivan Lutrov
 Author URI: http://lutrov.com/
+Text Domain: kontakt
 Copyright: 2020, Ivan Lutrov
 
 This program is free software; you can redistribute it and/or modify it under
