@@ -6,7 +6,7 @@ Plugin URI: https://github.com/lutrov/kontakt
 Description: Kontakt is a simple contact form that allows you to capture a name, email, telephone, company and message. No fancy form builder, no advanced conditional logic, just the basics. Allows you to block spambots without using annoying captchas and optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
 Author: Ivan Lutrov
 Author URI: http://lutrov.com/
-Version: 2.1
+Version: 2.2
 */
 
 defined('ABSPATH') || die();
@@ -104,7 +104,17 @@ function kontakt_message_manage_custom_column_action($column, $message_id) {
 				echo sprintf('%s', empty($data['TOKEN']) == false ? $data['TOKEN'] : '--');
 				break;
 			case 'permalink':
-				echo sprintf('%s', empty($data['PERMALINK']) == false ? $data['PERMALINK'] : '--');
+				if (empty($data['PERMALINK']) == false) {
+					$post_id = url_to_postid($data['PERMALINK']);
+					echo sprintf(
+						'<a href="%s" target="_blank" title="%s">%s</a>',
+						esc_attr($data['PERMALINK']),
+						$post_id > 0 ? esc_attr(get_post_field('post_title', $post_id)) : '????',
+						str_replace(home_url(), null, $data['PERMALINK'])
+					);
+				} else {
+					echo '--';
+				}
 				break;
 			case 'form':
 				echo sprintf('%s', empty($data['FORM']) == false ? $data['FORM'] : '--');
