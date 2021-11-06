@@ -6,7 +6,7 @@ Plugin URI: https://github.com/lutrov/kontakt
 Description: Kontakt is a simple contact form that allows you to capture a name, email, telephone, company and message. No fancy form builder, no advanced conditional logic, just the basics. Allows you to block spambots without using annoying captchas and optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
 Author: Ivan Lutrov
 Author URI: http://lutrov.com/
-Version: 2.2
+Version: 2.4
 */
 
 defined('ABSPATH') || die();
@@ -14,7 +14,7 @@ defined('ABSPATH') || die();
 //
 // Define constants used by this plugin.
 //
-define('KONTAKT_STORE_MESSAGES', true);
+define('KONTAKT_STORE_MESSAGES', false);
 
 //
 // Register message custom post type.
@@ -25,10 +25,10 @@ function kontakt_message_register_post_type_action() {
 	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
 		$args = array(
 			'labels' => array(
-				'name' => __('Contact Form Messages', 'kontakt'),
+				'name' => __('Kontakt Messages', 'kontakt'),
 				'search_items' => __('Search Messages', 'kontakt'),
 				'not_found' => __('No messages found', 'kontakt'),
-				'menu_name' => __('Contact Form Messages', 'kontakt')
+				'menu_name' => __('Kontakt Messages', 'kontakt')
 			),
 			'hierarchical' => false,
 			'description' => 'Messages, not blog posts.',
@@ -65,7 +65,7 @@ function kontakt_message_manage_columns_filter($columns) {
 			'token' => __('Token', 'kontakt'),
 			'permalink' => __('Permalink', 'kontakt'),
 			'form' => __('Form', 'kontakt'),
-			'date' => __('Date', 'kontakt'),
+			'created' => __('Date', 'kontakt'),
 		);
 	}
 	return $columns;
@@ -118,6 +118,13 @@ function kontakt_message_manage_custom_column_action($column, $message_id) {
 				break;
 			case 'form':
 				echo sprintf('%s', empty($data['FORM']) == false ? $data['FORM'] : '--');
+				break;
+			case 'created':
+				echo sprintf(
+					'%s<br>%s',
+					__('Created', 'kontakt'),
+					date('Y-m-d H:i', strtotime(get_post_field('post_date', $message_id)))
+				);
 				break;
 		}
 	}
@@ -233,7 +240,7 @@ function kontakt_messages_warning_action() {
 		$screen = get_current_screen();
 		if ($screen->post_type == 'message') {
 			echo sprintf('<div class="notice notice-info messages-edit-notice is-dismissible">');
-			echo sprintf('<p>%s</p>', __('Messages are automatically generated from the contact form and should never be created, edited or deleted here.', 'kontakt'));
+			echo sprintf('<p>%s</p>', __('Messages are automatically generated when the contact form is submitted and should never be created, edited or deleted here.', 'kontakt'));
 			echo sprintf('</div>');
 		}
 	}
@@ -247,7 +254,7 @@ function kontakt_messages_add_dashboard_metaboxes_action() {
 	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
 		add_meta_box(
 			'kontakt-recent-messages-metabox',
-			__('Recent Messages', 'kontakt'),
+			__('Recent Kontakt Messages', 'kontakt'),
 			'kontakt_message_recent_messages_dashboard_widget_callback',
 			'dashboard',
 			'normal', // normal, side, advanced
