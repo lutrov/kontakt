@@ -14,7 +14,7 @@ defined('ABSPATH') || die();
 //
 // Define constants used by this plugin.
 //
-define('KONTAKT_STORE_MESSAGES', false);
+define('KONTAKT_STORE_MESSAGES', true);
 
 //
 // Register message custom post type.
@@ -187,7 +187,7 @@ function kontakt_manage_message_posts_export_action() {
 					$query = new wp_query($args);
 					if (count($query->posts) > 0) {
 						echo sprintf(
-							"\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\r\n",
+							"\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s,\"%s\"\r\n",
 							__('NAME', 'kontakt'),
 							__('EMAIL', 'kontakt'),
 							__('TELEPHONE', 'kontakt'),
@@ -201,7 +201,7 @@ function kontakt_manage_message_posts_export_action() {
 						foreach ($query->posts as $post) {
 							$data = str_replace(chr(34), chr(39), kontakt_make_message_fields($post->post_content));
 							echo sprintf(
-								"\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\r\n",
+								"\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\r\n",
 								$data['NAME'],
 								$data['EMAIL'],
 								$data['TELEPHONE'],
@@ -210,7 +210,7 @@ function kontakt_manage_message_posts_export_action() {
 								$data['TOKEN'],
 								$data['PERMALINK'],
 								$data['FORM'],
-								date('Y-m-d H:i:s', strtotime($post->post_date))
+								date('Y-m-d H:i', strtotime($post->post_date))
 							);
 						}
 						exit();
