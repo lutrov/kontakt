@@ -14,7 +14,7 @@ defined('ABSPATH') || die();
 //
 // Define constants used by this plugin.
 //
-define('KONTAKT_STORE_MESSAGES', false);
+define('KONTAKT_STORE_MESSAGES', true);
 
 //
 // Register message custom post type.
@@ -133,7 +133,7 @@ function kontakt_message_manage_custom_column_action($column, $message_id) {
 //
 // Change sortable columns in messages listing screen.
 //
-add_action('manage_edit-message_sortable_columns', 'kontakt_message_manage_sortable_column_filter', 10, 1);
+add_filter('manage_edit-message_sortable_columns', 'kontakt_message_manage_sortable_column_filter', 10, 1);
 function kontakt_message_manage_sortable_column_filter($columns) {
 	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
 	}
@@ -1121,8 +1121,8 @@ function kontakt_shortcode($atts) {
 //
 // Load the plugin language files.
 //
-add_action('init', 'kontakt_load_textdomain', 10, 0);
-function kontakt_load_textdomain() {
+add_action('init', 'kontakt_load_textdomain_action', 10, 0);
+function kontakt_load_textdomain_action() {
 	$domain = 'kontakt';
 	load_textdomain(
 		$domain,
