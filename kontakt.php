@@ -6,7 +6,7 @@ Plugin URI: https://github.com/lutrov/kontakt
 Description: Kontakt is a simple contact form that allows you to capture a name, email, telephone, company and message. No fancy form builder, no advanced conditional logic, just the basics. Allows you to block spambots without using annoying captchas and optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
 Author: Ivan Lutrov
 Author URI: http://lutrov.com/
-Version: 2.4
+Version: 2.6
 */
 
 defined('ABSPATH') || die();
@@ -14,7 +14,7 @@ defined('ABSPATH') || die();
 //
 // Define constants used by this plugin.
 //
-define('KONTAKT_STORE_MESSAGES', true);
+define('KONTAKT_STORE_MESSAGES', false);
 
 //
 // Register message custom post type.
@@ -222,11 +222,31 @@ function kontakt_manage_message_posts_export_action() {
 }
 
 //
-// Hide the "add new" button on messages listing screen.
+// Hide the "add new" button, the quick edit & trash quicklinks on
+// messages listing screen as well as the "publish" button and the
+// timestamp edit link on the message edit screen.
+//
 //
 add_action('admin_head', 'kontakt_messages_admin_styles_action', 80, 0);
 function kontakt_messages_admin_styles_action() {
-	echo sprintf('<style type="text/css">.post-type-message .wp-heading-inline + .page-title-action {display:none}</style>');
+?>
+	<style type="text/css">
+		.post-type-message .wp-heading-inline + .page-title-action {
+			display: none;
+		}
+		.post-type-message .wp-list-table .row-actions {
+			color: transparent;
+		}
+		.post-type-message .wp-list-table .row-actions .inline,
+		.post-type-message .wp-list-table .row-actions .trash {
+			display: none;
+		}
+		.post-php.post-type-message a.edit-timestamp,
+		.post-php.post-type-message #major-publishing-actions {
+			display: none;
+		}
+	</style>
+<?php
 }
 
 //
