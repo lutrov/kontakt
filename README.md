@@ -343,4 +343,4 @@ function custom_kontakt_store_messages_filter($store) {
 }
 ```
 
-This would enable captured messages to be stored to the posts table as a custom post type "message" and make them available for viewing, filtering, sorting, export and deletion from the Tools menu in the admin dashboard.
+This would enable captured messages to be stored to the posts table as a custom post type "kontakt" and make them available for viewing, filtering, sorting, export and deletion from the Tools menu in the admin dashboard.
