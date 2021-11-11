@@ -6,7 +6,7 @@ Plugin URI: https://github.com/lutrov/kontakt
 Description: Kontakt is a simple contact form that allows you to capture a name, email, telephone, company and message. No fancy form builder, no advanced conditional logic, just the basics. Allows you to block spambots without using annoying captchas and optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
 Author: Ivan Lutrov
 Author URI: http://lutrov.com/
-Version: 2.6
+Version: 3.0
 */
 
 defined('ABSPATH') || die();
@@ -14,10 +14,10 @@ defined('ABSPATH') || die();
 //
 // Define constants used by this plugin.
 //
-define('KONTAKT_STORE_MESSAGES', false);
+define('KONTAKT_STORE_MESSAGES', true);
 
 //
-// Register message custom post type.
+// Register kontakt custom post type.
 // https://codex.wordpress.org/Function_Reference/register_post_type
 //
 add_action('wp_loaded', 'kontakt_message_register_post_type_action', 10, 0);
@@ -47,17 +47,17 @@ function kontakt_message_register_post_type_action() {
 			'capability_type' => 'post',
 			'show_in_rest' => false
 		);
-		register_post_type('message', $args);
+		register_post_type('kontakt', $args);
 	}
 }
 
 //
-// Add extra columns to messages listing screen.
+// Add extra columns to kontakt messages listing screen.
 // https://smashingmagazine.com/2017/12/customizing-admin-columns-wordpress/
 //
-add_filter('manage_message_posts_columns', 'kontakt_message_manage_columns_filter', 8, 1);
-function kontakt_message_manage_columns_filter($columns) {
-	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
+add_filter('manage_kontakt_posts_columns', 'kontakt_kontakt_manage_columns_filter', 8, 1);
+function kontakt_kontakt_manage_columns_filter($columns) {
+	if (apply_filters('kontakt_store_kontakts', KONTAKT_STORE_MESSAGES) == true) {
 		$columns = array(
 			'cb' => '<input type="checkbox">',
 			'from' => __('From', 'kontakt'),
@@ -75,8 +75,8 @@ function kontakt_message_manage_columns_filter($columns) {
 // Populate extra columns in messages listing screen.
 // https://smashingmagazine.com/2017/12/customizing-admin-columns-wordpress/
 //
-add_action('manage_message_posts_custom_column', 'kontakt_message_manage_custom_column_action', 8, 2);
-function kontakt_message_manage_custom_column_action($column, $message_id) {
+add_action('manage_kontakt_posts_custom_column', 'kontakt_kontakt_manage_custom_column_action', 8, 2);
+function kontakt_kontakt_manage_custom_column_action($column, $message_id) {
 	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
 		$post = get_post($message_id);
 		$data = kontakt_make_message_fields($post->post_content);
@@ -131,23 +131,23 @@ function kontakt_message_manage_custom_column_action($column, $message_id) {
 }
 
 //
-// Change sortable columns in messages listing screen.
+// Change sortable columns in kontakt messages listing screen.
 //
-add_filter('manage_edit-message_sortable_columns', 'kontakt_message_manage_sortable_column_filter', 10, 1);
-function kontakt_message_manage_sortable_column_filter($columns) {
+add_filter('manage_edit-kontakt_sortable_columns', 'kontakt_manage_sortable_column_filter', 10, 1);
+function kontakt_manage_sortable_column_filter($columns) {
 	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
 	}
 	return $columns;
 }
 
 //
-// Export button for messages screen.
+// Export button for kontakt messages screen.
 //
-add_action('manage_posts_extra_tablenav', 'kontakt_manage_message_posts_extra_tablenav_action', 20, 1);
-function kontakt_manage_message_posts_extra_tablenav_action($which) {
+add_action('manage_posts_extra_tablenav', 'kontakt_manage_posts_extra_tablenav_action', 20, 1);
+function kontakt_manage_posts_extra_tablenav_action($which) {
 	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
 		$screen = get_current_screen();
-		if ($screen->post_type == 'message' && $which == 'top') {
+		if ($screen->post_type == 'kontakt' && $which == 'top') {
 			echo sprintf('<div class="alignleft actions custom">');
 			echo sprintf('<button type="submit" name="export" class="button" value="1">%s</button>', __('Export', 'kontakt'));
 			echo sprintf('</div>');
@@ -156,19 +156,19 @@ function kontakt_manage_message_posts_extra_tablenav_action($which) {
 }
 
 //
-// Export messages in CSV format.
+// Export kontakt messages in CSV format.
 // We can't use `get_current_screen()` here because we're changing output headers.
 //
-add_action('admin_init', 'kontakt_manage_message_posts_export_action', 10, 0);
-function kontakt_manage_message_posts_export_action() {
+add_action('admin_init', 'kontakt_manage_posts_export_action', 10, 0);
+function kontakt_manage_posts_export_action() {
 	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
 		if (current_user_can('edit_posts') == true) {
-			if (isset($_REQUEST['post_type']) == true && $_REQUEST['post_type'] == 'message') {
+			if (isset($_REQUEST['post_type']) == true && $_REQUEST['post_type'] == 'kontakt') {
 				if (isset($_REQUEST['export']) == true && $_REQUEST['export'] == '1') {
 					header(sprintf('Content-type: %s', 'text/csv'));
-					header(sprintf('Content-Disposition: attachment; filename="messages-%s.csv"', date('YmdHis')));
+					header(sprintf('Content-Disposition: attachment; filename="kontakt-messages-%s.csv"', date('YmdHis')));
 					$args = array(
-						'post_type' => 'message',
+						'post_type' => 'kontakt',
 						'post_status' => 'private',
 						'order' => 'ASC',
 						'orderby' => 'ID',
@@ -222,27 +222,27 @@ function kontakt_manage_message_posts_export_action() {
 }
 
 //
-// Hide the "add new" button, the quick edit & trash quicklinks on
-// messages listing screen as well as the "publish" button and the
-// timestamp edit link on the message edit screen.
+// Hide the "add new" button, the quick edit & trash quicklinks on the
+// kontakt messages listing screen as well as the "publish" button and the
+// timestamp edit link on the kontakt message edit screen.
 //
 //
 add_action('admin_head', 'kontakt_messages_admin_styles_action', 80, 0);
 function kontakt_messages_admin_styles_action() {
 ?>
 	<style type="text/css">
-		.post-type-message .wp-heading-inline + .page-title-action {
+		.post-type-kontakt .wp-heading-inline + .page-title-action {
 			display: none;
 		}
-		.post-type-message .wp-list-table .row-actions {
+		.post-type-kontakt .wp-list-table .row-actions {
 			color: transparent;
 		}
-		.post-type-message .wp-list-table .row-actions .inline,
-		.post-type-message .wp-list-table .row-actions .trash {
+		.post-type-kontakt .wp-list-table .row-actions .inline,
+		.post-type-kontakt .wp-list-table .row-actions .trash {
 			display: none;
 		}
-		.post-php.post-type-message a.edit-timestamp,
-		.post-php.post-type-message #major-publishing-actions {
+		.post-php.post-type-kontakt a.edit-timestamp,
+		.post-php.post-type-kontakt #major-publishing-actions {
 			display: none;
 		}
 	</style>
@@ -250,7 +250,7 @@ function kontakt_messages_admin_styles_action() {
 }
 
 //
-// Warn user not to create, edit or delete messages.
+// Warn user not to create, edit or delete kontakt messages.
 // https://developer.wordpress.org/reference/hooks/admin_notices/
 // TODO: Shoudn't need this if we're using contextual help tabs.
 //
@@ -258,8 +258,8 @@ add_action('admin_notices', 'kontakt_messages_warning_action', 10, 0);
 function kontakt_messages_warning_action() {
 	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
 		$screen = get_current_screen();
-		if ($screen->post_type == 'message') {
-			echo sprintf('<div class="notice notice-info messages-edit-notice is-dismissible">');
+		if ($screen->post_type == 'kontakt') {
+			echo sprintf('<div class="notice notice-info kontakt-messages-edit-notice is-dismissible">');
 			echo sprintf('<p>%s</p>', __('Messages are automatically generated when the contact form is submitted and should never be created, edited or deleted here.', 'kontakt'));
 			echo sprintf('</div>');
 		}
@@ -275,7 +275,7 @@ function kontakt_messages_add_dashboard_metaboxes_action() {
 		add_meta_box(
 			'kontakt-recent-messages-metabox',
 			__('Recent Kontakt Messages', 'kontakt'),
-			'kontakt_message_recent_messages_dashboard_widget_callback',
+			'kontakt_recent_messages_dashboard_widget_callback',
 			'dashboard',
 			'normal', // normal, side, advanced
 			'high' // default, high, low
@@ -288,11 +288,11 @@ function kontakt_messages_add_dashboard_metaboxes_action() {
 // http://wpengineer.com/2382/wordpress-constants-overview/
 // TODO: Have to use the `wp_query` object since `get_posts()` doesn't work here.
 //
-function kontakt_message_recent_messages_dashboard_widget_callback($post, $args) {
+function kontakt_recent_messages_dashboard_widget_callback($post, $args) {
 	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
 		$html = null;
 		$args = array(
-			'post_type' => 'message',
+			'post_type' => 'kontakt',
 			'post_status' => 'private',
 			'order' => 'DESC',
 			'orderby' => 'ID',
@@ -310,7 +310,7 @@ function kontakt_message_recent_messages_dashboard_widget_callback($post, $args)
 			);
 		}
 		if (empty($html) == false) {
-			echo sprintf('<dl>%s</dl><p><a href="edit.php?post_type=message">%s</a></p>', $html, __('Show all', 'kontakt'));
+			echo sprintf('<dl>%s</dl><p><a href="edit.php?post_type=kontakt">%s</a></p>', $html, __('Show all', 'kontakt'));
 		} else {
 			echo sprintf('<p>%s</p>', __('There are no messages at this time.', 'kontakt'));
 		}
@@ -657,7 +657,7 @@ function kontakt_shortcode($atts) {
 								'post_content' => $body,
 								'post_title' => sprintf('M%s', date('YmdHis')),
 								'post_status' => 'private',
-								'post_type' => 'message',
+								'post_type' => 'kontakt',
 								'comment_status' => 'closed',
 								'ping_status' => 'closed',
 							));
