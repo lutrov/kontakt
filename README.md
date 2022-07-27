@@ -288,6 +288,11 @@ You can customise the way the contact form looks by adding something like this t
 	color: crimson;
 }
 
+.wp-block-kontakt-form form p.error {
+	height: 30px;
+	font-size: smaller;
+}
+
 .wp-block-kontakt-form input[type=submit] {
 	margin-top: 20px;
 }
@@ -327,7 +332,8 @@ Or if you wanted some fancier layouts for desktop devices, add something like th
 	.wp-block-kontakt-form .wp-block-field-token {
 		width: 50%;
 		display: inline-block;
-		clear: right;
+		padding-right: 2%;
+		clear: left;
 	}
 
 }
