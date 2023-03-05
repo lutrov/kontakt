@@ -6,15 +6,30 @@ Plugin URI: https://github.com/lutrov/kontakt
 Description: Kontakt is a simple contact form that allows you to capture a name, email, telephone, company and message. No fancy form builder, no advanced conditional logic, just the basics. Allows you to block spambots without using annoying captchas and optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
 Author: Ivan Lutrov
 Author URI: http://lutrov.com/
-Version: 3.2
+Version: 4.0
 */
 
 defined('ABSPATH') || die();
 
 //
+// These are the rules when validating the form token:
+//
+// 1. If the remote address is not supplied, reject the submission as spam.
+// 2. If the remote address doesn't match the remote address supplied when the form
+//    was loaded, reject the submission as spam.
+// 3. If the token timestamp is less than 5 seconds from when the form
+//    was loaded, reject the submission as spam.
+// 4. If the token timestamp is more than 5 minutes from when the form
+//    was loaded, reject the submission as spam.
+// 5. If the user agent string is not supplied, reject the submission as spam.
+// 6. If the user agent string doesn't match the user agent string supplied
+//    when the form was loaded, reject the submission as spam.
+//
+
+//
 // Define constants used by this plugin.
 //
-define('KONTAKT_STORE_MESSAGES', true);
+define('KONTAKT_STORE_MESSAGES', false);
 
 //
 // Register kontakt custom post type.
@@ -25,10 +40,10 @@ function kontakt_message_register_post_type_action() {
 	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
 		$args = array(
 			'labels' => array(
-				'name' => __('Kontakt Messages', 'kontakt'),
+				'name' => __('Contact Messages', 'kontakt'),
 				'search_items' => __('Search Messages', 'kontakt'),
 				'not_found' => __('No messages found', 'kontakt'),
-				'menu_name' => __('Kontakt Messages', 'kontakt')
+				'menu_name' => __('Contact Messages', 'kontakt')
 			),
 			'hierarchical' => false,
 			'description' => 'Messages, not blog posts.',
@@ -57,12 +72,11 @@ function kontakt_message_register_post_type_action() {
 //
 add_filter('manage_kontakt_posts_columns', 'kontakt_kontakt_manage_columns_filter', 8, 1);
 function kontakt_kontakt_manage_columns_filter($columns) {
-	if (apply_filters('kontakt_store_kontakts', KONTAKT_STORE_MESSAGES) == true) {
+	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
 		$columns = array(
 			'cb' => '<input type="checkbox">',
 			'from' => __('From', 'kontakt'),
 			'message' => __('Message', 'kontakt'),
-			'token' => __('Token', 'kontakt'),
 			'permalink' => __('Permalink', 'kontakt'),
 			'form' => __('Form', 'kontakt'),
 			'created' => __('Date', 'kontakt'),
@@ -98,10 +112,19 @@ function kontakt_kontakt_manage_custom_column_action($column, $message_id) {
 				echo implode('<br>', $from);
 				break;
 			case 'message':
-				echo sprintf('%s', empty($data['MESSAGE']) == false ? $data['MESSAGE'] : '--');
-				break;
-			case 'token':
-				echo sprintf('%s', empty($data['TOKEN']) == false ? $data['TOKEN'] : '--');
+				$string = $data['MESSAGE'];
+				$length = 160;
+				if (strlen($string) > $length) {
+					$string = substr($string, 0, $length);
+					$length = max(strrpos($string, '.'), strrpos($string, '?'), strrpos($string, '!')) + 1;
+					if ($length > 1) {
+						$string = substr($string, 0, $length);
+						if (strlen($string) < strlen($data['MESSAGE'])) {
+							$string = sprintf('%s [...]', substr($string, 0, strlen($string) - 1));
+						}
+					}
+				}
+				echo sprintf('%s', empty($string) == false ? $string : '--');
 				break;
 			case 'permalink':
 				if (empty($data['PERMALINK']) == false) {
@@ -187,13 +210,12 @@ function kontakt_manage_posts_export_action() {
 					$query = new wp_query($args);
 					if (count($query->posts) > 0) {
 						echo sprintf(
-							"\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s,\"%s\"\r\n",
+							"\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\r\n",
 							__('NAME', 'kontakt'),
 							__('EMAIL', 'kontakt'),
 							__('TELEPHONE', 'kontakt'),
 							__('COMPANY', 'kontakt'),
 							__('MESSAGE', 'kontakt'),
-							__('TOKEN', 'kontakt'),
 							__('PERMALINK', 'kontakt'),
 							__('FORM', 'kontakt'),
 							__('DATE', 'kontakt'),
@@ -207,7 +229,6 @@ function kontakt_manage_posts_export_action() {
 								$data['TELEPHONE'],
 								$data['COMPANY'],
 								$data['MESSAGE'],
-								$data['TOKEN'],
 								$data['PERMALINK'],
 								$data['FORM'],
 								date('Y-m-d H:i', strtotime($post->post_date))
@@ -274,7 +295,7 @@ function kontakt_messages_add_dashboard_metaboxes_action() {
 	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
 		add_meta_box(
 			'kontakt-recent-messages-metabox',
-			__('Recent Kontakt Messages', 'kontakt'),
+			__('Recent Contact Messages', 'kontakt'),
 			'kontakt_recent_messages_dashboard_widget_callback',
 			'dashboard',
 			'normal', // normal, side, advanced
@@ -318,6 +339,21 @@ function kontakt_recent_messages_dashboard_widget_callback($post, $args) {
 }
 
 //
+// Set classic editor to text mode on edit kontact message screen.
+// https://developer.wordpress.org/reference/functions/wp_default_editor/
+//
+add_filter('wp_default_editor', 'kontakt_default_editor_filter', 10, 1);
+function kontakt_default_editor_filter($editor) {
+	global $typenow;
+	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
+		if ($typenow == 'kontakt') {
+			$editor = 'html';
+		}
+	}
+	return $editor;
+}
+
+//
 // Convert message text stream into a usable array.
 //
 function kontakt_make_message_fields($text) {
@@ -327,7 +363,6 @@ function kontakt_make_message_fields($text) {
 		'TELEPHONE' => null,
 		'COMPANY' => null,
 		'MESSAGE' => null,
-		'TOKEN' => null,
 		'PERMALINK' => null,
 		'FORM' => null
 	);
@@ -342,24 +377,24 @@ function kontakt_make_message_fields($text) {
 }
 
 //
-// Shortcode with name, email, message and (optional) token fields.
-// [kontakt form="1234" fields="name|email|telephone|company|message|token|agreement" required="name|email|telephone|company|message|token|agreement" subject="Contact form" cc="hello@example.com" bcc="bye@example.com" token="ABCD1234" agreement="privacy-policy" redirect="/stage/test/thank-you" anchor="content"]
+// Shortcode with name, email, message other fields.
+// [kontakt form="1234" fields="name|email|telephone|company|message|agreement" required="name|email|telephone|company|message|agreement" subject="Contact form" cc="hello@example.com" bcc="bye@example.com" agreement="privacy-policy" redirect="/stage/test/thank-you" anchor="content"]
 //
 add_shortcode('kontakt', 'kontakt_shortcode');
 add_shortcode('contact', 'kontakt_shortcode');
 function kontakt_shortcode($atts) {
+	global $post;
 	static $sent = false;
 	$html = null;
 	extract(shortcode_atts(
 		array(
 			'form' => null,
-			'fields' => 'name|email|telephone|company|message|token|agreement',
-			'required' => 'name|email|telephone|company|message|token',
+			'fields' => 'name|email|telephone|company|message|agreement',
+			'required' => 'name|email|telephone|company|message',
 			'subject' => null,
 			'to' => null,
 			'cc' => null,
 			'bcc' => null,
-			'token' => null,
 			'agreement' => null,
 			'redirect' => null,
 			'anchor' => null
@@ -367,7 +402,7 @@ function kontakt_shortcode($atts) {
 		$atts
 	));
 	if (empty($form) == true) {
-		$form = hash('adler32', sprintf('%s%s%s%s%s%s', __FUNCTION__, $fields, $required, $subject, $to, $token));
+		$form = hash('adler32', sprintf('%s%s%s%s%s', __FUNCTION__, $fields, $required, $subject, $to));
 	}
 	$id = sanitize_title($form);
 	$fields = explode('|', sanitize_text_field($fields));
@@ -376,13 +411,12 @@ function kontakt_shortcode($atts) {
 	$to = sanitize_text_field($to);
 	$cc = sanitize_text_field($cc);
 	$bcc = sanitize_text_field($bcc);
-	$token = sanitize_text_field($token);
 	$agreement = sanitize_text_field($agreement);
 	$redirect = sanitize_text_field($redirect);
 	$anchor = sanitize_text_field($anchor);
 	$form = array(
 		'markup' => array(),
-		'data' => array('name' => null, 'email' => null, 'telephone' => null, 'company' => null, 'message' => null, 'token' => null, 'agreement' => null),
+		'data' => array('name' => null, 'email' => null, 'telephone' => null, 'company' => null, 'message' => null, 'agreement' => null),
 		'errors' => array()
 	);
 	array_push(
@@ -503,46 +537,6 @@ function kontakt_shortcode($atts) {
 					$form['data']['message'] = trim(preg_replace('#\s+#', ' ', $form['data']['message']));
 				}
 			}
-			if (in_array('token', $fields) == true) {
-				$form['data']['token'] = sanitize_text_field($_POST[sprintf('token-%s', $id)]);
-				if (in_array('token', $required) == true) {
-					if (empty($form['data']['token']) == true) {
-						$form['errors']['token'] = apply_filters(
-							'kontakt_shortcode_token_empty',
-							__('Token should not be empty.', 'kontakt'),
-							$id
-						);
-					} elseif (preg_match("#^[A-Za-z0-9-]+$#", $form['data']['token']) == 0) {
-						$form['errors']['token'] = apply_filters(
-							'kontakt_shortcode_token_invalid',
-							__('Invalid token.', 'kontakt'),
-							$id
-						);
-					} elseif ($form['data']['token'] <> $token) {
-						$form['errors']['token'] = apply_filters(
-							'kontakt_shortcode_token_missmatch',
-							__('Token missmatch.', 'kontakt'),
-							$id
-						);
-					}
-				} else {
-					if (empty($form['data']['token']) == false) {
-						if (preg_match("#^[A-Za-z0-9-]+$#", $form['data']['token']) == 0) {
-							$form['errors']['token'] = apply_filters(
-								'kontakt_shortcode_token_invalid',
-								__('Invalid token.', 'kontakt'),
-								$id
-							);
-						} elseif ($form['data']['token'] <> $token) {
-							$form['errors']['token'] = apply_filters(
-								'kontakt_shortcode_token_missmatch',
-								__('Token missmatch.', 'kontakt'),
-								$id
-							);
-						}
-					}
-				}
-			}
 			if (in_array('agreement', $fields) == true) {
 				$form['data']['agreement'] = isset($_POST[sprintf('agreement-%s', $id)]) == true ? absint($_POST[sprintf('agreement-%s', $id)]) : null;
 				if (empty($form['data']['agreement']) == true) {
@@ -552,6 +546,30 @@ function kontakt_shortcode($atts) {
 						$id
 					);
 				}
+			}
+			// Validate spam token
+			$spam = true;
+			if (isset($_POST[sprintf('token-%s', $id)]) == true) {
+				$ip = strtok($_POST[sprintf('token-%s', $id)], '-');
+				// By using `rand()` for empty remote addresses, we ensure they must be supplied
+				if (hash_hmac('ripemd128', empty($_SERVER['REMOTE_ADDR']) == false ? $_SERVER['REMOTE_ADDR'] : rand(), NONCE_SALT) == $ip) {
+					// Divide timestamp by 4 to get the actual value
+					$ts = ((int) strtok('-')) / 4;
+					// Must be more than 5 seconds since form loading time
+					if (($ts + 5) < time()) {
+						// Must be less than 5 minutes since form loading time
+						if (($ts + 300) > time()) {
+							$ua = strtok('-');
+							// By using `rand()` for empty user agent strings, we ensure they must be supplied
+							if (hash_hmac('ripemd128', empty($_SERVER['HTTP_USER_AGENT']) == false ? $_SERVER['HTTP_USER_AGENT'] : rand(), NONCE_SALT) == $ua) {
+								$spam = false;
+							}
+						}
+					}
+				}
+			}
+			if ($spam == true) {
+				$form['errors'] = array('spam' => true);
 			}
 			if ($sent == false) {
 				if (empty($form['errors']) == true) {
@@ -598,14 +616,6 @@ function kontakt_shortcode($atts) {
 							__('MESSAGE', 'kontakt'),
 							empty($form['data']['message']) == false ? $form['data']['message'] : '--'
 							);
-					}
-					if (in_array('token', $fields) == true) {
-						$body = sprintf(
-							"%s%s\n%s\n\n",
-							$body,
-							__('TOKEN', 'kontakt'),
-							empty($form['data']['token']) == false ? $form['data']['token'] : '--'
-						);
 					}
 					$body = sprintf(
 						"%s%s\n%s\n\n",
@@ -686,17 +696,26 @@ function kontakt_shortcode($atts) {
 						);
 					}			
 				} else {
-					array_push(
-						$form['markup'],
-						sprintf(
+					if (array_key_exists('spam', $form['errors']) == true) {
+						$html = sprintf(
+							'<p class="message error">%s</p>',
+							apply_filters(
+								'kontakt_shortcode_message_spam_error',
+								__('Your message has been flagged as spam.', 'kontakt'),
+								$id
+							)
+						);
+					} else {
+						$html = sprintf(
 							'<p class="message error">%s</p>',
 							apply_filters(
 								'kontakt_shortcode_message_submit_error',
 								__('There were one or more errors, please see below.', 'kontakt'),
 								$id
 							)
-						)
-					);
+						);
+					}
+					array_push($form['markup'], $html);
 				}
 			}
 		}
@@ -937,51 +956,6 @@ function kontakt_shortcode($atts) {
 				$form['markup'], sprintf('</div>')
 			);
 		}
-		if (in_array('token', $fields) == true) {
-			array_push(
-				$form['markup'],
-				'<div class="wp-block-field-token">'
-			);
-			if (in_array('token', $required) == true) {
-				array_push(
-					$form['markup'],
-					sprintf(
-						'<label for="token-%s">%s <span class="required">*</span></label>',
-						$id,
-						apply_filters('kontakt_shortcode_token_label', __('Token', 'kontakt'), $id)
-					)
-				);
-			} else {
-				array_push(
-					$form['markup'],
-					sprintf(
-						'<label for="token-%s">%s</label>',
-						$id,
-						apply_filters('kontakt_shortcode_token_label', __('Token', 'kontakt'), $id)
-					)
-				);
-			}
-			array_push(
-				$form['markup'],
-				sprintf(
-					'<input type="text" name="token-%s" id="token-%s" class="%s" value="%s">',
-					$id,
-					$id,
-					isset($form['errors']['token']) == true ? 'error' : null,
-					$form['data']['token']
-				)
-			);
-			array_push(
-				$form['markup'],
-				sprintf(
-					'<p class="error">%s</p>',
-					isset($form['errors']['token']) == true ? $form['errors']['token'] : null
-				)
-			);
-			array_push(
-				$form['markup'], sprintf('</div>')
-			);
-		}
 		if (in_array('agreement', $fields) == true) {
 			array_push(
 				$form['markup'],
@@ -1023,6 +997,16 @@ function kontakt_shortcode($atts) {
 				$form['markup'], sprintf('</div>')
 			);
 		}
+		array_push(
+			$form['markup'],
+			sprintf(
+				'<input type="hidden" name="token-%s" value="%s-%s-%s">',
+				$id,
+				hash_hmac('ripemd128', empty($_SERVER['REMOTE_ADDR']) == false ? $_SERVER['REMOTE_ADDR'] : rand(), NONCE_SALT),
+				time() * 4,
+				hash_hmac('ripemd128', empty($_SERVER['HTTP_USER_AGENT']) == false ? $_SERVER['HTTP_USER_AGENT'] : rand(), NONCE_SALT)
+			)
+		);
 		array_push(
 			$form['markup'],
 			sprintf('<div class="wp-block-button">')
@@ -1093,16 +1077,6 @@ function kontakt_shortcode($atts) {
 			array_push(
 				$form['markup'],
 				sprintf('<dd>%s</dd>', $form['data']['message'])
-			);
-		}
-		if (in_array('token', $fields) == true) {
-			array_push(
-				$form['markup'],
-				sprintf('<dt>%s</dt>', apply_filters('kontakt_shortcode_token_label', __('Token', 'kontakt'), $id))
-			);
-			array_push(
-				$form['markup'],
-				sprintf('<dd>%s</dd>', $form['data']['token'])
 			);
 		}
 		array_push(
