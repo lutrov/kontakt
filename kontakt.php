@@ -6,7 +6,7 @@ Plugin URI: https://github.com/lutrov/kontakt
 Description: Kontakt is a simple contact form that allows you to capture a name, email, telephone, company and message. No fancy form builder, no advanced conditional logic, just the basics. Allows you to block spambots without using annoying captchas and optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
 Author: Ivan Lutrov
 Author URI: http://lutrov.com/
-Version: 4.0
+Version: 5.0
 */
 
 defined('ABSPATH') || die();
@@ -223,7 +223,7 @@ function kontakt_manage_posts_export_action() {
 						foreach ($query->posts as $post) {
 							$data = str_replace(chr(34), chr(39), kontakt_make_message_fields($post->post_content));
 							echo sprintf(
-								"\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\r\n",
+								"\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\"\r\n",
 								$data['NAME'],
 								$data['EMAIL'],
 								$data['TELEPHONE'],
@@ -389,13 +389,14 @@ function kontakt_shortcode($atts) {
 	extract(shortcode_atts(
 		array(
 			'form' => null,
-			'fields' => 'name|email|telephone|company|message|agreement',
-			'required' => 'name|email|telephone|company|message',
+			'fields' => 'name|email|telephone|company|message|quiz|agreement',
+			'required' => 'name|email|telephone|company|message|quiz|agreement',
 			'subject' => null,
 			'to' => null,
 			'cc' => null,
 			'bcc' => null,
 			'agreement' => null,
+			'quiz' => null,
 			'redirect' => null,
 			'anchor' => null
 		),
@@ -412,11 +413,12 @@ function kontakt_shortcode($atts) {
 	$cc = sanitize_text_field($cc);
 	$bcc = sanitize_text_field($bcc);
 	$agreement = sanitize_text_field($agreement);
+	$quiz = sanitize_text_field($quiz);
 	$redirect = sanitize_text_field($redirect);
 	$anchor = sanitize_text_field($anchor);
 	$form = array(
 		'markup' => array(),
-		'data' => array('name' => null, 'email' => null, 'telephone' => null, 'company' => null, 'message' => null, 'agreement' => null),
+		'data' => array('name' => null, 'email' => null, 'telephone' => null, 'company' => null, 'message' => null, 'quiz' => null, 'agreement' => null),
 		'errors' => array()
 	);
 	array_push(
@@ -432,7 +434,7 @@ function kontakt_shortcode($atts) {
 					if (empty($form['data']['name']) == true) {
 						$form['errors']['name'] = apply_filters(
 							'kontakt_shortcode_name_empty',
-							__('Name should not be empty.', 'kontakt'),
+							__('Name is required.', 'kontakt'),
 							$id
 						);
 					} elseif (preg_match("#^[A-Za-z .'-]+$#", $form['data']['name']) == 0) {
@@ -460,7 +462,7 @@ function kontakt_shortcode($atts) {
 					if (empty($form['data']['email']) == true) {
 						$form['errors']['email'] = apply_filters(
 							'kontakt_shortcode_email_empty',
-							__('Email should not be empty.', 'kontakt'),
+							__('Email is required.', 'kontakt'),
 							$id
 						);
 					} elseif (preg_match("#^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$#", $form['data']['email']) == 0) {
@@ -488,7 +490,7 @@ function kontakt_shortcode($atts) {
 					if (empty($form['data']['telephone']) == true) {
 						$form['errors']['telephone'] = apply_filters(
 							'kontakt_shortcode_telephone_empty',
-							__('Telephone should not be empty.', 'kontakt'),
+							__('Telephone is required.', 'kontakt'),
 							$id
 						);
 					} elseif (preg_match("#^[0-9 ()-]+$#", $form['data']['telephone']) == 0) {
@@ -516,7 +518,7 @@ function kontakt_shortcode($atts) {
 					if (empty($form['data']['company']) == true) {
 						$form['errors']['company'] = apply_filters(
 							'kontakt_shortcode_company_empty',
-							__('Company should not be empty.', 'kontakt'),
+							__('Company is required.', 'kontakt'),
 							$id
 						);
 					}
@@ -528,7 +530,7 @@ function kontakt_shortcode($atts) {
 					if (empty($form['data']['message']) == true) {
 						$form['errors']['message'] = apply_filters(
 							'kontakt_shortcode_message_empty',
-							__('Message should not be empty.', 'kontakt'),
+							__('Message is required.', 'kontakt'),
 							$id
 						);
 					}
@@ -537,14 +539,46 @@ function kontakt_shortcode($atts) {
 					$form['data']['message'] = trim(preg_replace('#\s+#', ' ', $form['data']['message']));
 				}
 			}
+			if (in_array('quiz', $fields) == true) {
+				$form['data']['quiz'] = sanitize_text_field($_POST[sprintf('quiz-%s', $id)]);
+				$question = sprintf('%s?', trim(strtok($quiz, '?')));
+				$answer = trim(strtok('?'));
+				if (in_array('quiz', $required) == true) {
+					if (empty($form['data']['quiz']) == true) {
+						$form['errors']['quiz'] = apply_filters(
+							'kontakt_shortcode_quiz_empty',
+							__('Quiz answer is required.', 'kontakt'),
+							$id
+						);
+					} elseif (strtolower($form['data']['quiz']) <> strtolower($answer)) {
+						$form['errors']['quiz'] = apply_filters(
+							'kontakt_shortcode_quiz_invalid',
+							__('Invalid quiz answer.', 'kontakt'),
+							$id
+						);
+					}
+				} else {
+					if (empty($form['data']['quiz']) == false) {
+						if (strtolower($form['data']['quiz']) <> strtolower($answer)) {
+							$form['errors']['quiz'] = apply_filters(
+								'kontakt_shortcode_quiz_invalid',
+								__('Invalid quiz answer.', 'kontakt'),
+								$id
+							);
+						}
+					}
+				}
+			}
 			if (in_array('agreement', $fields) == true) {
 				$form['data']['agreement'] = isset($_POST[sprintf('agreement-%s', $id)]) == true ? absint($_POST[sprintf('agreement-%s', $id)]) : null;
-				if (empty($form['data']['agreement']) == true) {
-					$form['errors']['agreement'] = apply_filters(
-						'kontakt_shortcode_agreement_empty',
-						__('Agreement should not be empty.', 'kontakt'),
-						$id
-					);
+				if (in_array('agreement', $required) == true) {
+					if (empty($form['data']['agreement']) == true) {
+						$form['errors']['agreement'] = apply_filters(
+							'kontakt_shortcode_agreement_empty',
+							__('Agreement is required.', 'kontakt'),
+							$id
+						);
+					}
 				}
 			}
 			// Validate spam token
@@ -689,7 +723,7 @@ function kontakt_shortcode($atts) {
 								'<p class="message error">%s</p>',
 								apply_filters(
 									'kontakt_shortcode_message_tech_error',
-									__('A technical error occurred while trying to send your message, please try again later.', 'kontakt'),
+									__('There was an error trying to send your message, please try again later.', 'kontakt'),
 									$id
 								)
 							)
@@ -701,7 +735,7 @@ function kontakt_shortcode($atts) {
 							'<p class="message error">%s</p>',
 							apply_filters(
 								'kontakt_shortcode_message_spam_error',
-								__('Your message has been flagged as spam.', 'kontakt'),
+								__('There was an error trying to send your message, please try again later.', 'kontakt'),
 								$id
 							)
 						);
@@ -710,7 +744,7 @@ function kontakt_shortcode($atts) {
 							'<p class="message error">%s</p>',
 							apply_filters(
 								'kontakt_shortcode_message_submit_error',
-								__('There were one or more errors, please see below.', 'kontakt'),
+								__('One or more fields have an error, please check and try again.', 'kontakt'),
 								$id
 							)
 						);
@@ -956,6 +990,54 @@ function kontakt_shortcode($atts) {
 				$form['markup'], sprintf('</div>')
 			);
 		}
+		if (in_array('quiz', $fields) == true) {
+			if (empty($quiz) == false) {
+				$question = sprintf('%s?', trim(strtok($quiz, '?')));
+				array_push(
+					$form['markup'],
+					'<div class="wp-block-field-quiz">'
+				);
+				if (in_array('quiz', $required) == true) {
+					array_push(
+						$form['markup'],
+						sprintf(
+							'<label for="quiz-%s">%s <span class="required">*</span></label>',
+							$id,
+							$question
+						)
+					);
+				} else {
+					array_push(
+						$form['markup'],
+						sprintf(
+							'<label for="quiz-%s">%s</label>',
+							$id,
+							$question
+						)
+					);
+				}
+				array_push(
+					$form['markup'],
+					sprintf(
+						'<input type="text" name="quiz-%s" id="quiz-%s" class="%s" value="%s">',
+						$id,
+						$id,
+						isset($form['errors']['quiz']) == true ? 'error' : null,
+						$form['data']['quiz']
+					)
+				);
+				array_push(
+					$form['markup'],
+					sprintf(
+						'<p class="error">%s</p>',
+						isset($form['errors']['quiz']) == true ? $form['errors']['quiz'] : null
+					)
+				);
+				array_push(
+					$form['markup'], sprintf('</div>')
+				);
+			}
+		}
 		if (in_array('agreement', $fields) == true) {
 			array_push(
 				$form['markup'],
@@ -972,18 +1054,33 @@ function kontakt_shortcode($atts) {
 							strtolower($page->post_title)
 						)
 					);
-					array_push(
-						$form['markup'],
-						sprintf(
-							'<label for="agreement-%s"><input type="checkbox" name="agreement-%s" id="agreement-%s" class="%s" value="1"%s> %s <span class="required">*</span></label>',
-							$id,
-							$id,
-							$id,
-							isset($form['errors']['agreement']) == true ? 'error' : null,
-							$form['data']['agreement'] == 1 ? ' checked' : null,
-							apply_filters('kontakt_shortcode_agreement_label', $agreement, $id)
-						)
-					);
+					if (in_array('agreement', $required) == true) {
+						array_push(
+							$form['markup'],
+							sprintf(
+								'<label for="agreement-%s"><input type="checkbox" name="agreement-%s" id="agreement-%s" class="%s" value="1"%s> %s <span class="required">*</span></label>',
+								$id,
+								$id,
+								$id,
+								isset($form['errors']['agreement']) == true ? 'error' : null,
+								$form['data']['agreement'] == 1 ? ' checked' : null,
+								apply_filters('kontakt_shortcode_agreement_label', $agreement, $id)
+							)
+						);
+					} else {
+						array_push(
+							$form['markup'],
+							sprintf(
+								'<label for="agreement-%s"><input type="checkbox" name="agreement-%s" id="agreement-%s" class="%s" value="1"%s> %s</label>',
+								$id,
+								$id,
+								$id,
+								isset($form['errors']['agreement']) == true ? 'error' : null,
+								$form['data']['agreement'] == 1 ? ' checked' : null,
+								apply_filters('kontakt_shortcode_agreement_label', $agreement, $id)
+							)
+						);
+					}
 					array_push(
 						$form['markup'],
 						sprintf(
