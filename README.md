@@ -15,13 +15,13 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 Kontakt uses a shortcode which can be used as a Gutenberg block or placed in a sidebar widget. Here's a usage example:
 
 ```
-[kontakt form="1234" fields="name|email|telephone|company|message|agreement" required="name|email|telephone|company|message" subject="Contact form" to="admin@example.com" cc="hello@example.com" bcc="bye@example.com" agreement="terms" redirect="thanks" anchor="content"]
+[kontakt form="1234" fields="name|email|telephone|company|message|quiz|agreement" required="name|email|telephone|company|message|quiz|agreement" subject="Contact form" to="admin@example.com" cc="hello@example.com" bcc="bye@example.com" agreement="terms" redirect="thanks" quiz="What is 4+8? 12" anchor="content"]
 ```
 
 OR
 
 ```
-[contact form="1234" fields="name|email|telephone|company|message|agreement" required="name|email|telephone|company|message" subject="Contact form" to="admin@example.com" cc="hello@example.com" bcc="bye@example.com" agreement="terms" redirect="thanks" anchor="content"]
+[contact form="1234" fields="name|email|telephone|company|message|quiz|agreement" required="name|email|telephone|company|message|quiz|agreement" subject="Contact form" to="admin@example.com" cc="hello@example.com" bcc="bye@example.com" agreement="terms" redirect="thanks" quiz="What is 4+8? 12" anchor="content"]
 ```
 
 Breaking down the shortcode attributes:
@@ -33,6 +33,7 @@ Breaking down the shortcode attributes:
 * `to`: This is the optional "to" address, and if not specified defaults to your site's admin email address.
 * `cc`: This is the optional "cc" address.
 * `bcc`: This is the optional "bcc" address.
+* `quiz`: This is the optional quiz question and answer challenge, delimited by a question mark.
 * `agreement`: This is the slug of the page path which has the terms of use or the privacy policy, which is used when `agreement` is specified in the list of fields.
 * `redirect`: This is the optional slug of the page path to redirect to after successful submission.
 * `anchor`: This is the optional section on the page to anchor the form to after submission.
@@ -46,7 +47,7 @@ This plugin provides an API to customise the default field labels and messages. 
 add_filter('kontakt_shortcode_name_label', 'custom_kontakt_shortcode_name_label_filter', 10, 2);
 function custom_kontakt_shortcode_name_label_filter($label, $form_id) {
 	if ($form_id == '1234') {
-		$label = __('Enter your name');
+		$label = __('Name');
 	}
 	return $label;
 }
@@ -55,7 +56,7 @@ function custom_kontakt_shortcode_name_label_filter($label, $form_id) {
 add_filter('kontakt_shortcode_name_empty', 'custom_kontakt_shortcode_name_empty_filter', 10, 2);
 function custom_kontakt_shortcode_name_empty_filter($message, $form_id) {
 	if ($form_id == '1234') {
-		$message = __('Your name should not be empty.');
+		$message = __('Name is required.');
 	}
 	return $message;
 }
@@ -64,7 +65,7 @@ function custom_kontakt_shortcode_name_empty_filter($message, $form_id) {
 add_filter('kontakt_shortcode_name_invalid', 'custom_kontakt_shortcode_name_invalid_filter', 10, 2);
 function custom_kontakt_shortcode_name_invalid_filter($message, $form_id) {
 	if ($form_id == '1234') {
-		$message = __('Your name is invalid.');
+		$message = __('Invalid name.');
 	}
 	return $message;
 }
@@ -73,7 +74,7 @@ function custom_kontakt_shortcode_name_invalid_filter($message, $form_id) {
 add_filter('kontakt_shortcode_email_label', 'custom_kontakt_shortcode_email_label_filter', 10, 2);
 function custom_kontakt_shortcode_email_label_filter($label, $form_id) {
 	if ($form_id == '1234') {
-		$label = __('Enter your email');
+		$label = __('Email');
 	}
 	return $label;
 }
@@ -82,7 +83,7 @@ function custom_kontakt_shortcode_email_label_filter($label, $form_id) {
 add_filter('kontakt_shortcode_email_empty', 'custom_kontakt_shortcode_email_empty_filter', 10, 2);
 function custom_kontakt_shortcode_email_empty_filter($message, $form_id) {
 	if ($form_id == '1234') {
-		$message = __('Your email should not be empty.');
+		$message = __('Email is required.');
 	}
 	return $message;
 }
@@ -91,7 +92,7 @@ function custom_kontakt_shortcode_email_empty_filter($message, $form_id) {
 add_filter('kontakt_shortcode_email_invalid', 'custom_kontakt_shortcode_email_invalid_filter', 10, 2);
 function custom_kontakt_shortcode_email_invalid_filter($message, $form_id) {
 	if ($form_id == '1234') {
-		$message = __('Your email is invalid.');
+		$message = __('Invalid email.');
 	}
 	return $message;
 }
@@ -100,7 +101,7 @@ function custom_kontakt_shortcode_email_invalid_filter($message, $form_id) {
 add_filter('kontakt_shortcode_telephone_label', 'custom_kontakt_shortcode_telephone_label_filter', 10, 2);
 function custom_kontakt_shortcode_telephone_label_filter($label, $form_id) {
 	if ($form_id == '1234') {
-		$label = __('Enter your telephone');
+		$label = __('Telephone');
 	}
 	return $label;
 }
@@ -109,7 +110,7 @@ function custom_kontakt_shortcode_telephone_label_filter($label, $form_id) {
 add_filter('kontakt_shortcode_telephone_empty', 'custom_kontakt_shortcode_telephone_empty_filter', 10, 2);
 function custom_kontakt_shortcode_telephone_empty_filter($message, $form_id) {
 	if ($form_id == '1234') {
-		$message = __('Your telephone should not be empty.');
+		$message = __('Telephone is required.');
 	}
 	return $message;
 }
@@ -118,15 +119,16 @@ function custom_kontakt_shortcode_telephone_empty_filter($message, $form_id) {
 add_filter('kontakt_shortcode_telephone_invalid', 'custom_kontakt_shortcode_telephone_invalid_filter', 10, 2);
 function custom_kontakt_shortcode_telephone_invalid_filter($message, $form_id) {
 	if ($form_id == '1234') {
-		$message = __('Your telephone is invalid.');
+		$message = __('Invalid telephone.');
 	}
 	return $message;
 }
+
 // ---- Customise contact form shortcode company field label.
 add_filter('kontakt_shortcode_company_label', 'custom_kontakt_shortcode_company_label_filter', 10, 2);
 function custom_kontakt_shortcode_company_label_filter($label, $form_id) {
 	if ($form_id == '1234') {
-		$label = __('Enter your organisation');
+		$label = __('Company');
 	}
 	return $label;
 }
@@ -135,16 +137,7 @@ function custom_kontakt_shortcode_company_label_filter($label, $form_id) {
 add_filter('kontakt_shortcode_company_empty', 'custom_kontakt_shortcode_company_empty_filter', 10, 2);
 function custom_kontakt_shortcode_company_empty_filter($message, $form_id) {
 	if ($form_id == '1234') {
-		$message = __('Your organisation should not be empty.');
-	}
-	return $message;
-}
-
-// ---- Customise contact form shortcode company field invalid message.
-add_filter('kontakt_shortcode_company_invalid', 'custom_kontakt_shortcode_company_invalid_filter', 10, 2);
-function custom_kontakt_shortcode_company_invalid_filter($message, $form_id) {
-	if ($form_id == '1234') {
-		$message = __('Your organisation is invalid.');
+		$message = __('Company is required.');
 	}
 	return $message;
 }
@@ -153,7 +146,7 @@ function custom_kontakt_shortcode_company_invalid_filter($message, $form_id) {
 add_filter('kontakt_shortcode_message_label', 'custom_kontakt_shortcode_message_label_filter', 10, 2);
 function custom_kontakt_shortcode_message_label_filter($label, $form_id) {
 	if ($form_id == '1234') {
-		$label = __('Enter your message');
+		$label = __('Message');
 	}
 	return $label;
 }
@@ -162,7 +155,7 @@ function custom_kontakt_shortcode_message_label_filter($label, $form_id) {
 add_filter('kontakt_shortcode_message_empty', 'custom_kontakt_shortcode_message_empty_filter', 10, 2);
 function custom_kontakt_shortcode_message_empty_filter($message, $form_id) {
 	if ($form_id == '1234') {
-		$message = __('Your message should not be empty.');
+		$message = __('Message is required.');
 	}
 	return $message;
 }
@@ -171,7 +164,7 @@ function custom_kontakt_shortcode_message_empty_filter($message, $form_id) {
 add_filter('kontakt_shortcode_agreement_label', 'custom_kontakt_shortcode_agreement_label_filter', 10, 2);
 function custom_kontakt_shortcode_agreement_label_filter($label, $form_id) {
 	if ($form_id == '1234') {
-		$label = __('I agree with the terms and conditions.');
+		$label = __('I agree to the terms and conditions set out on this site.');
 	}
 	return $label;
 }
@@ -180,7 +173,7 @@ function custom_kontakt_shortcode_agreement_label_filter($label, $form_id) {
 add_filter('kontakt_shortcode_agreement_empty', 'custom_kontakt_shortcode_agreement_empty_filter', 10, 2);
 function custom_kontakt_shortcode_agreement_empty_filter($message, $form_id) {
 	if ($form_id == '1234') {
-		$message = __('Agreement should not be empty.');
+		$message = __('Agreement is required.');
 	}
 	return $message;
 }
@@ -198,7 +191,7 @@ function custom_kontakt_shortcode_submit_label_filter($label, $form_id) {
 add_filter('kontakt_shortcode_message_submit_error', 'custom_kontakt_shortcode_message_submit_error_filter', 10, 2);
 function custom_kontakt_shortcode_message_submit_error_filter($message, $form_id) {
 	if ($form_id == '1234') {
-		$message = __('There were errors with your input, please see below.');
+		$message = __('One or more fields have an error, please check and try again.');
 	}
 	return $message;
 }
@@ -207,7 +200,7 @@ function custom_kontakt_shortcode_message_submit_error_filter($message, $form_id
 add_filter('kontakt_shortcode_message_spam_error', 'custom_kontakt_shortcode_message_spam_error_filter', 10, 2);
 function custom_kontakt_shortcode_message_spam_error_filter($message, $form_id) {
 	if ($form_id == '1234') {
-		$message = __('Your message has been flagged as spam.');
+		$message = __('There was an error trying to send your message, please try again later.');
 	}
 	return $message;
 }
@@ -216,7 +209,7 @@ function custom_kontakt_shortcode_message_spam_error_filter($message, $form_id) 
 add_filter('kontakt_shortcode_message_success', 'custom_kontakt_shortcode_message_success_filter', 10, 2);
 function custom_kontakt_shortcode_message_success_filter($message, $form_id) {
 	if ($form_id == '1234') {
-		$message = __('Your message was sent successfully.');
+		$message = __('Your message has been sent.');
 	}
 	return $message;
 }
@@ -225,7 +218,7 @@ function custom_kontakt_shortcode_message_success_filter($message, $form_id) {
 add_filter('kontakt_shortcode_message_tech_error', 'custom_kontakt_shortcode_message_tech_error_filter', 10, 2);
 function custom_kontakt_shortcode_message_tech_error_filter($message, $form_id) {
 	if ($form_id == '1234') {
-		$message = __('Failed to send your message due to a technical error, please try again later.');
+		$message = __('There was an error trying to send your message, please try again later.');
 	}
 	return $message;
 }
