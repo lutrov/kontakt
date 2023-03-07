@@ -40,7 +40,17 @@ Breaking down the shortcode attributes:
 
 Please note that `agreement` must be a valid terms and conditions or privacy policy slug, otherwise the agreement (checkbox) field won't show. Also, please note that it makes no sense to specify both `redirect` and `anchor` since they're mutually exclusive.
 
-This plugin provides an API to customise the default field labels and messages. See this example:
+Also, fields will always show in this order:
+
+1. `name`
+2. `email`
+3. `telephone`
+4. `company`
+5. `message`
+6. `quiz`
+7. `agreement`
+
+This plugin provides an API to customise the default field labels and messages. See these examples:
 
 ```
 // ---- Customise contact form shortcode name field label.
@@ -245,13 +255,21 @@ You can customise the way the contact form looks by adding something like this t
 .wp-block-kontakt-form input[type="tel"],
 .wp-block-kontakt-form textarea {
 	border: 2px solid var(--wp--preset--color--contrast);
+	outline: none;
 }
 
 .wp-block-kontakt-form input[type="text"].error,
 .wp-block-kontakt-form input[type="email"].error,
 .wp-block-kontakt-form input[type="tel"].error,
 .wp-block-kontakt-form textarea.error {
-	border: 2px solid var(--wp--preset--color--vivid-red);
+	border-color: var(--wp--preset--color--vivid-red);
+}
+
+.wp-block-kontakt-form input[type="text"]:focus,
+.wp-block-kontakt-form input[type="email"]:focus,
+.wp-block-kontakt-form input[type="tel"]:focus,
+.wp-block-kontakt-form textarea:focus {
+	border-color: var(--wp--preset--color--contrast);
 }
 
 .wp-block-kontakt-form .wp-block-button input[type="submit"] {
@@ -271,7 +289,7 @@ You can customise the way the contact form looks by adding something like this t
 }
 
 .wp-block-kontakt-form dl {
-	background-color: whitesmoke;
+	background-color: aliceblue;
 	padding: 20px;
 }
 
