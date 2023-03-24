@@ -6,7 +6,7 @@ Plugin URI: https://github.com/lutrov/kontakt
 Description: Kontakt is a simple contact form that allows you to capture a name, email, telephone, company and message. No fancy form builder, no advanced conditional logic, just the basics. Allows you to block spambots without using annoying captchas and optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
 Author: Ivan Lutrov
 Author URI: http://lutrov.com/
-Version: 5.0
+Version: 5.1
 */
 
 defined('ABSPATH') || die();
@@ -1133,7 +1133,7 @@ function kontakt_shortcode($atts) {
 			);
 			array_push(
 				$form['markup'],
-				sprintf('<dd>%s</dd>', $form['data']['name'])
+				sprintf('<dd>%s</dd>', empty($form['data']['name']) == false ? $form['data']['name'] : '--')
 			);
 		}
 		if (in_array('email', $fields) == true) {
@@ -1143,7 +1143,7 @@ function kontakt_shortcode($atts) {
 			);
 			array_push(
 				$form['markup'],
-				sprintf('<dd>%s</dd>', $form['data']['email'])
+				sprintf('<dd>%s</dd>', empty($form['data']['email']) == false ? $form['data']['email'] : '--')
 			);
 		}
 		if (in_array('telephone', $fields) == true) {
@@ -1153,7 +1153,7 @@ function kontakt_shortcode($atts) {
 			);
 			array_push(
 				$form['markup'],
-				sprintf('<dd>%s</dd>', $form['data']['telephone'])
+				sprintf('<dd>%s</dd>', empty($form['data']['telephone']) == false ? $form['data']['telephone'] : '--')
 			);
 		}
 		if (in_array('company', $fields) == true) {
@@ -1163,7 +1163,7 @@ function kontakt_shortcode($atts) {
 			);
 			array_push(
 				$form['markup'],
-				sprintf('<dd>%s</dd>', $form['data']['company'])
+				sprintf('<dd>%s</dd>', empty($form['data']['company']) == false ? $form['data']['company'] : '--')
 			);
 		}
 		if (in_array('message', $fields) == true) {
@@ -1173,7 +1173,7 @@ function kontakt_shortcode($atts) {
 			);
 			array_push(
 				$form['markup'],
-				sprintf('<dd>%s</dd>', $form['data']['message'])
+				sprintf('<dd>%s</dd>', empty($form['data']['message']) == false ? $form['data']['message'] : '--')
 			);
 		}
 		array_push(
