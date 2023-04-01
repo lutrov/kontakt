@@ -6,7 +6,7 @@ Plugin URI: https://github.com/lutrov/kontakt
 Description: Kontakt is a simple contact form that allows you to capture a name, email, telephone, company and message. No fancy form builder, no advanced conditional logic, just the basics. Allows you to block spambots without using annoying captchas and optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
 Author: Ivan Lutrov
 Author URI: http://lutrov.com/
-Version: 5.1
+Version: 5.2
 */
 
 defined('ABSPATH') || die();
@@ -389,8 +389,8 @@ function kontakt_shortcode($atts) {
 	extract(shortcode_atts(
 		array(
 			'form' => null,
-			'fields' => 'name|email|telephone|company|message|quiz|agreement',
-			'required' => 'name|email|telephone|company|message|quiz|agreement',
+			'fields' => 'name|email|telephone|company|message|agreement',
+			'required' => 'name|email|telephone|company|message|agreement',
 			'subject' => null,
 			'to' => null,
 			'cc' => null,
@@ -414,6 +414,10 @@ function kontakt_shortcode($atts) {
 	$bcc = sanitize_text_field($bcc);
 	$agreement = sanitize_text_field($agreement);
 	$quiz = sanitize_text_field($quiz);
+	if (empty($quiz) == false) {
+		array_push($fields, 'quiz');
+		array_push($required, 'quiz');
+	}
 	$redirect = sanitize_text_field($redirect);
 	$anchor = sanitize_text_field($anchor);
 	$form = array(
