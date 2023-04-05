@@ -210,7 +210,7 @@ function custom_kontakt_shortcode_message_submit_error_filter($message, $form_id
 add_filter('kontakt_shortcode_message_spam_error', 'custom_kontakt_shortcode_message_spam_error_filter', 10, 2);
 function custom_kontakt_shortcode_message_spam_error_filter($message, $form_id) {
 	if ($form_id == '1234') {
-		$message = __('There was an error trying to send your message, please try again later.');
+		$message = __('There was an error while sending your message, please try again later.');
 	}
 	return $message;
 }
@@ -228,7 +228,7 @@ function custom_kontakt_shortcode_message_success_filter($message, $form_id) {
 add_filter('kontakt_shortcode_message_tech_error', 'custom_kontakt_shortcode_message_tech_error_filter', 10, 2);
 function custom_kontakt_shortcode_message_tech_error_filter($message, $form_id) {
 	if ($form_id == '1234') {
-		$message = __('There was an error trying to send your message, please try again later.');
+		$message = __('There was an error while sending your message, please try again later.');
 	}
 	return $message;
 }
