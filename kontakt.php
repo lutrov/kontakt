@@ -727,7 +727,7 @@ function kontakt_shortcode($atts) {
 								'<p class="message error">%s</p>',
 								apply_filters(
 									'kontakt_shortcode_message_tech_error',
-									__('There was an error trying to send your message, please try again later.', 'kontakt'),
+									__('There was an error while sending your message, please try again later.', 'kontakt'),
 									$id
 								)
 							)
@@ -739,7 +739,7 @@ function kontakt_shortcode($atts) {
 							'<p class="message error">%s</p>',
 							apply_filters(
 								'kontakt_shortcode_message_spam_error',
-								__('There was an error trying to send your message, please try again later.', 'kontakt'),
+								__('There was an error while sending your message, please try again later.', 'kontakt'),
 								$id
 							)
 						);
