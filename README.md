@@ -15,13 +15,13 @@ This project is licensed under the [GNU GPL](http://www.gnu.org/licenses/old-lic
 Kontakt uses a shortcode which can be used as a Gutenberg block or placed in a sidebar widget. Here's a usage example:
 
 ```
-[kontakt form="1234" fields="name|email|telephone|company|message|quiz|agreement" required="name|email|telephone|company|message|quiz|agreement" subject="Contact form" to="admin@example.com" cc="hello@example.com" bcc="bye@example.com" agreement="terms" redirect="thanks" quiz="What is 4+8? 12" anchor="content"]
+[kontakt form="1234" fields="name|email|telephone|company|message|agreement" required="name|email|telephone|company|message|agreement" subject="Contact form" to="admin@example.com" cc="hello@example.com" bcc="bye@example.com" agreement="terms" redirect="thanks" quiz="What is 4+8? 12" anchor="content"]
 ```
 
 OR
 
 ```
-[contact form="1234" fields="name|email|telephone|company|message|quiz|agreement" required="name|email|telephone|company|message|quiz|agreement" subject="Contact form" to="admin@example.com" cc="hello@example.com" bcc="bye@example.com" agreement="terms" redirect="thanks" quiz="What is 4+8? 12" anchor="content"]
+[contact form="1234" fields="name|email|telephone|company|message|agreement" required="name|email|telephone|company|message|agreement" subject="Contact form" to="admin@example.com" cc="hello@example.com" bcc="bye@example.com" agreement="terms" redirect="thanks" quiz="What is 4+8? 12" anchor="content"]
 ```
 
 Breaking down the shortcode attributes:
