@@ -6,7 +6,7 @@ Plugin URI: https://github.com/lutrov/kontakt
 Description: Kontakt is a simple contact form that allows you to capture a name, email, telephone, company and message. No fancy form builder, no advanced conditional logic, just the basics. Allows you to block spambots without using annoying captchas and optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
 Author: Ivan Lutrov
 Author URI: http://lutrov.com/
-Version: 5.2
+Version: 6.0
 */
 
 defined('ABSPATH') || die();
@@ -164,6 +164,50 @@ function kontakt_manage_sortable_column_filter($columns) {
 }
 
 //
+// Hook the posts search if we're on the admin page for kontakt post types.
+//
+add_action('admin_init', 'kontakt_setup_search_filter_action', 10, 0);
+function kontakt_setup_search_filter_action() {
+	global $typenow;
+	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
+		if ($typenow === 'kontakt') {
+			add_filter('posts_search', 'kontakt_search_filter', 10, 2);
+		}
+	}
+}
+
+//
+// Change the standard query condition to allow searching on specific
+// keywords. This enables you to filter by names, email addresses or forms
+// by entering search queries using any one of these three formats:
+//
+// 1. "NAME Ivan Lutrov"
+// 2. "EMAIL ivan@lutrov.com"
+// 3. "FORM 1234"
+//
+// Note, the keywords "NAME", "EMAIL" and "FORM" must be entered in uppercase
+// to have meaning otherwise the query strings will be treated as standard.
+//
+function kontakt_search_filter($search, $query) {
+	global $wpdb;
+	if ($query->is_main_query() == true && empty($query->query['s']) == false) {
+		$s = preg_replace('#\s+#', ' ', $query->query['s']);
+		switch (strtok($s, ' ')) {
+			case 'NAME':
+				$search = sprintf('AND (%s.post_content LIKE "%%NAME\r\n%s\r\n%%" OR %s.post_content LIKE "%%NAME\n%s\n%%")', $wpdb->posts, substr($s, 5), $wpdb->posts, substr($s, 5));
+				break;
+			case 'EMAIL':
+				$search = sprintf('AND (%s.post_content LIKE "%%EMAIL\r\n%s\r\n%%" OR %s.post_content LIKE "%%EMAIL\n%s\n%%")', $wpdb->posts, substr($s, 6), $wpdb->posts, substr($s, 6));
+				break;
+			case 'FORM':
+				$search = sprintf('AND (%s.post_content LIKE "%%FORM\r\n%s\r\n%%" OR %s.post_content LIKE "%%FORM\n%s\n%%")', $wpdb->posts, substr($s, 5), $wpdb->posts, substr($s, 5));
+				break;
+		}
+	}
+	return $search;
+}
+
+//
 // Export button for kontakt messages screen.
 //
 add_action('manage_posts_extra_tablenav', 'kontakt_manage_posts_extra_tablenav_action', 20, 1);
@@ -271,19 +315,42 @@ function kontakt_messages_admin_styles_action() {
 }
 
 //
-// Warn user not to create, edit or delete kontakt messages.
-// https://developer.wordpress.org/reference/hooks/admin_notices/
-// TODO: Shoudn't need this if we're using contextual help tabs.
+// Contextual help screens.
 //
-add_action('admin_notices', 'kontakt_messages_warning_action', 10, 0);
-function kontakt_messages_warning_action() {
-	if (apply_filters('kontakt_store_messages', KONTAKT_STORE_MESSAGES) == true) {
-		$screen = get_current_screen();
-		if ($screen->post_type == 'kontakt') {
-			echo sprintf('<div class="notice notice-info kontakt-messages-edit-notice is-dismissible">');
-			echo sprintf('<p>%s</p>', __('Messages are automatically generated when the contact form is submitted and should never be created, edited or deleted here.', 'kontakt'));
-			echo sprintf('</div>');
-		}
+add_action('admin_head', 'koktakt_contextual_help_action', 100, 0);
+function koktakt_contextual_help_action() {
+	$screen = get_current_screen();
+	if ($screen->post_type == 'kontakt') {
+		$screen->add_help_tab(array(
+			'id' => 'overview',
+			'title' => __('Overview'),
+			'callback' => 'koktakt_contextual_help_callback'
+		));
+		$screen->add_help_tab(array(
+			'id' => 'tips',
+			'title' => __('Tips'),
+			'callback' => 'koktakt_contextual_help_callback'
+		));
+	}
+}
+
+//
+// Contextual help callback based on post type.
+//
+function koktakt_contextual_help_callback($screen, $tab) {
+	switch ($tab['id']) {
+		case 'overview':
+			echo sprintf('<p>%s</p>', __('Contact messages are automatically generated when a contact form is submitted and should never be created, edited or deleted here.'));
+			break;
+		case 'tips':
+			echo sprintf('<p>%s</p>', __('When searching contact messages, you can use specific keywords to restrict output based on the <em>name</em>, <em>email address</em> or <em>form</em>, like this example:'));
+			echo sprintf('<ul>');
+			echo sprintf('<li><kbd>NAME Jane Doe</kbd><br>%s</li>', __('Only show messages where the from name is <em>Jane Doe</em>'));
+			echo sprintf('<li><kbd>EMAIL janedoe@example.com</kbd><br>%s</li>', __('Only show messages where the from email is <em>janedoe@example.com</em>'));
+			echo sprintf('<li><kbd>FORM 201204</kbd><br>%s</li>', __('Only show messages where the form is <em>201204</em>'));
+			echo sprintf('</ul>');
+			echo sprintf('<p>%s</p>', __('Note, the keywords <kbd>NAME</kbd>, <kbd>EMAIL</kbd> and <kbd>FORM</kbd> must be entered in uppercase to have meaning otherwise the search query will be treated as normal.'));
+			break;
 	}
 }
 
@@ -1115,7 +1182,7 @@ function kontakt_shortcode($atts) {
 		array_push(
 			$form['markup'],
 			sprintf(
-				'<input type="submit" name="submit-%s" value="%s">',
+				'<input type="submit" name="submit-%s" class="wp-element-button" value="%s">',
 				$id,
 				apply_filters('kontakt_shortcode_submit_label', __('Submit', 'kontakt'), $id)
 			)
