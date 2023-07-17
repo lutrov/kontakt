@@ -4,9 +4,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Kontakt 3.2\n"
-"POT-Creation-Date: 2021-02-14 16:28+1100\n"
-"PO-Revision-Date: 2022-07-27 12:46+1000\n"
+"Project-Id-Version: Kontakt 6.1\n"
+"POT-Creation-Date: 2023-07-17 16:28+1100\n"
+"PO-Revision-Date: 2023-07-17 16:46+1000\n"
 "Last-Translator: Ivan Lutrov <ivan@lutrov.com>\n"
 "Language: en\n"
 "Language-Team: Ivan Lutrov <ivan@lutrov.com>\n"
@@ -15,191 +15,219 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Eazy Po 0.9.5.3\n"
 
-#: kontakt.php:28 kontakt.php:31
-msgid "Kontakt Messages"
+#: kontakt.php:43 kontakt.php:46
+msgid "Contact Messages"
 msgstr ""
 
-#: kontakt.php:29
+#: kontakt.php:44
 msgid "Search Messages"
 msgstr ""
 
-#: kontakt.php:30
+#: kontakt.php:45
 msgid "No messages found"
 msgstr ""
 
-#: kontakt.php:63
+#: kontakt.php:78
 msgid "From"
 msgstr ""
 
-#: kontakt.php:64 kontakt.php:906 kontakt.php:915 kontakt.php:1091
+#: kontakt.php:79 kontakt.php:1037 kontakt.php:1046 kontakt.php:1250
 msgid "Message"
 msgstr ""
 
-#: kontakt.php:65 kontakt.php:951 kontakt.php:960 kontakt.php:1101
-msgid "Token"
-msgstr ""
-
-#: kontakt.php:66
+#: kontakt.php:80
 msgid "Permalink"
 msgstr ""
 
-#: kontakt.php:67
+#: kontakt.php:81
 msgid "Form"
 msgstr ""
 
-#: kontakt.php:68
+#: kontakt.php:82
 msgid "Date"
 msgstr ""
 
-#: kontakt.php:125
+#: kontakt.php:148
 msgid "Created"
 msgstr ""
 
-#: kontakt.php:152
+#: kontakt.php:219
 msgid "Export"
 msgstr ""
 
-#: kontakt.php:191 kontakt.php:566
+#: kontakt.php:258 kontakt.php:689
 msgid "NAME"
 msgstr ""
 
-#: kontakt.php:192 kontakt.php:574
+#: kontakt.php:259 kontakt.php:697
 msgid "EMAIL"
 msgstr ""
 
-#: kontakt.php:193 kontakt.php:582
+#: kontakt.php:260 kontakt.php:705
 msgid "TELEPHONE"
 msgstr ""
 
-#: kontakt.php:194 kontakt.php:590
+#: kontakt.php:261 kontakt.php:713
 msgid "COMPANY"
 msgstr ""
 
-#: kontakt.php:195 kontakt.php:598
+#: kontakt.php:262 kontakt.php:721
 msgid "MESSAGE"
 msgstr ""
 
-#: kontakt.php:196 kontakt.php:606
-msgid "TOKEN"
-msgstr ""
-
-#: kontakt.php:197 kontakt.php:613
+#: kontakt.php:263 kontakt.php:728
 msgid "PERMALINK"
 msgstr ""
 
-#: kontakt.php:198 kontakt.php:619
+#: kontakt.php:264 kontakt.php:734
 msgid "FORM"
 msgstr ""
 
-#: kontakt.php:199
+#: kontakt.php:265
 msgid "DATE"
 msgstr ""
 
-#: kontakt.php:263
+#: kontakt.php:326
+msgid "Overview"
+msgstr ""
+
+#: kontakt.php:331
+msgid "Tips"
+msgstr ""
+
+#: kontakt.php:343
 msgid ""
-"Messages are automatically generated when the contact form is submitted and "
-"should never be created, edited or deleted here."
+"Contact messages are automatically generated when a contact form is "
+"submitted and should never be created, edited or deleted here."
 msgstr ""
 
-#: kontakt.php:277
-msgid "Recent Kontakt Messages"
+#: kontakt.php:346
+msgid ""
+"When searching contact messages, you can use specific keywords to restrict "
+"output based on the <em>name</em>, <em>email address</em> or <em>form</em>, "
+"like this example:"
 msgstr ""
 
-#: kontakt.php:313
-msgid "Show all"
+#: kontakt.php:348
+msgid "Only show messages where the from name is <em>Jane Doe</em>"
 msgstr ""
 
-#: kontakt.php:315
-msgid "There are no messages at this time."
+#: kontakt.php:349
+msgid "Only show messages where the from email is <em>janedoe@example.com</em>"
+msgstr ""
+
+#: kontakt.php:350
+msgid "Only show messages where the form is <em>201204</em>"
+msgstr ""
+
+#: kontakt.php:352
+msgid ""
+"Note, the keywords <kbd>NAME</kbd>, <kbd>EMAIL</kbd> and <kbd>FORM</kbd> "
+"must be entered in uppercase to have meaning otherwise the search query will "
+"be treated as normal."
+msgstr ""
+
+#: kontakt.php:365
+msgid "Recent Contact Messages"
 msgstr ""
 
 #: kontakt.php:401
-msgid "Name should not be empty."
+msgid "Show all"
 msgstr ""
 
-#: kontakt.php:407 kontakt.php:416
+#: kontakt.php:403
+msgid "There are no messages at this time."
+msgstr ""
+
+#: kontakt.php:508
+msgid "Name is required."
+msgstr ""
+
+#: kontakt.php:514 kontakt.php:523
 msgid "Invalid name."
 msgstr ""
 
-#: kontakt.php:429
-msgid "Email should not be empty."
+#: kontakt.php:536
+msgid "Email is required."
 msgstr ""
 
-#: kontakt.php:435 kontakt.php:444
+#: kontakt.php:542 kontakt.php:551
 msgid "Invalid email."
 msgstr ""
 
-#: kontakt.php:457
-msgid "Telephone should not be empty."
+#: kontakt.php:564
+msgid "Telephone is required."
 msgstr ""
 
-#: kontakt.php:463 kontakt.php:472
+#: kontakt.php:570 kontakt.php:579
 msgid "Invalid telephone."
 msgstr ""
 
-#: kontakt.php:485
-msgid "Company should not be empty."
+#: kontakt.php:592
+msgid "Company is required."
 msgstr ""
 
-#: kontakt.php:497
-msgid "Message should not be empty."
+#: kontakt.php:604
+msgid "Message is required."
 msgstr ""
 
-#: kontakt.php:512
-msgid "Token should not be empty."
+#: kontakt.php:621
+msgid "Quiz answer is required."
 msgstr ""
 
-#: kontakt.php:518 kontakt.php:533
-msgid "Invalid token."
-msgstr ""
-
-#: kontakt.php:524 kontakt.php:539
-msgid "Token missmatch."
-msgstr ""
-
-#: kontakt.php:551
-msgid "Agreement should not be empty."
-msgstr ""
-
-#: kontakt.php:638
-msgid "Contact form"
+#: kontakt.php:627 kontakt.php:636
+msgid "Invalid quiz answer."
 msgstr ""
 
 #: kontakt.php:649
+msgid "Agreement is required."
+msgstr ""
+
+#: kontakt.php:753
+msgid "Contact form"
+msgstr ""
+
+#: kontakt.php:764
 msgid "Your message has been sent."
 msgstr ""
 
-#: kontakt.php:682
-msgid ""
-"A technical error occurred while trying to send your message, please try "
-"again later."
+#: kontakt.php:797 kontakt.php:809
+msgid "There was an error while sending your message, please try again later."
 msgstr ""
 
-#: kontakt.php:695
-msgid "There were one or more errors, please see below."
+#: kontakt.php:818
+msgid "One or more fields have an error, please check and try again."
 msgstr ""
 
-#: kontakt.php:726 kontakt.php:735 kontakt.php:1051
+#: kontakt.php:842
+msgid "Fields marked with"
+msgstr ""
+
+#: kontakt.php:843
+msgid "are required."
+msgstr ""
+
+#: kontakt.php:857 kontakt.php:866 kontakt.php:1210
 msgid "Name"
 msgstr ""
 
-#: kontakt.php:771 kontakt.php:780 kontakt.php:1061
+#: kontakt.php:902 kontakt.php:911 kontakt.php:1220
 msgid "Email"
 msgstr ""
 
-#: kontakt.php:816 kontakt.php:825 kontakt.php:1071
+#: kontakt.php:947 kontakt.php:956 kontakt.php:1230
 msgid "Telephone"
 msgstr ""
 
-#: kontakt.php:861 kontakt.php:870 kontakt.php:1081
+#: kontakt.php:992 kontakt.php:1001 kontakt.php:1240
 msgid "Company"
 msgstr ""
 
-#: kontakt.php:994
+#: kontakt.php:1128
 #, php-format
 msgid "I agree to the terms set out in the %s page"
 msgstr ""
 
-#: kontakt.php:1035
+#: kontakt.php:1194
 msgid "Submit"
 msgstr ""
