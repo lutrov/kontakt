@@ -6,7 +6,7 @@ Plugin URI: https://github.com/lutrov/kontakt
 Description: Kontakt is a simple contact form that allows you to capture a name, email, telephone, company and message. No fancy form builder, no advanced conditional logic, just the basics. Allows you to block spambots without using annoying captchas and optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
 Author: Ivan Lutrov
 Author URI: http://lutrov.com/
-Version: 6.0
+Version: 6.1
 */
 
 defined('ABSPATH') || die();
@@ -317,19 +317,19 @@ function kontakt_messages_admin_styles_action() {
 //
 // Contextual help screens.
 //
-add_action('admin_head', 'koktakt_contextual_help_action', 100, 0);
-function koktakt_contextual_help_action() {
+add_action('admin_head', 'kontakt_contextual_help_action', 100, 0);
+function kontakt_contextual_help_action() {
 	$screen = get_current_screen();
 	if ($screen->post_type == 'kontakt') {
 		$screen->add_help_tab(array(
 			'id' => 'overview',
 			'title' => __('Overview'),
-			'callback' => 'koktakt_contextual_help_callback'
+			'callback' => 'kontakt_contextual_help_callback'
 		));
 		$screen->add_help_tab(array(
 			'id' => 'tips',
 			'title' => __('Tips'),
-			'callback' => 'koktakt_contextual_help_callback'
+			'callback' => 'kontakt_contextual_help_callback'
 		));
 	}
 }
@@ -337,7 +337,7 @@ function koktakt_contextual_help_action() {
 //
 // Contextual help callback based on post type.
 //
-function koktakt_contextual_help_callback($screen, $tab) {
+function kontakt_contextual_help_callback($screen, $tab) {
 	switch ($tab['id']) {
 		case 'overview':
 			echo sprintf('<p>%s</p>', __('Contact messages are automatically generated when a contact form is submitted and should never be created, edited or deleted here.'));
@@ -834,6 +834,13 @@ function kontakt_shortcode($atts) {
 				$id,
 				$_SERVER['REQUEST_URI'],
 				empty($anchor) == false ? sprintf('#%s', $anchor) : null
+			)
+		);
+		array_push(
+			$form['markup'],
+			sprintf('<p class="message">%s <span class="required">*</span> %s</p>',
+				__('Fields marked with', 'kontakt'),
+				__('are required.', 'kontakt')
 			)
 		);
 		if (in_array('name', $fields) == true) {
