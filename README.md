@@ -304,27 +304,27 @@ Or if you wanted some fancier layouts for desktop devices, add something like th
 ```
 @media (min-width: 1025px) {
 
-	.wp-block-kontakt-form .wp-block-field-name,
-	.wp-block-kontakt-form .wp-block-field-email,
-	.wp-block-kontakt-form .wp-block-field-telephone,
-	.wp-block-kontakt-form .wp-block-field-company {
+	.wp-block-kontakt-form .wp-block-kontakt-form__name,
+	.wp-block-kontakt-form .wp-block-kontakt-form__email,
+	.wp-block-kontakt-form .wp-block-kontakt-form__telephone,
+	.wp-block-kontakt-form .wp-block-kontakt-form__company {
 		width: 50%;
 		display: inline-block;
 	}
 
-	.wp-block-kontakt-form .wp-block-field-message {
+	.wp-block-kontakt-form .wp-block-kontakt-form__message {
 		width: 100%;
 		display: inline-block;
 	}
 
-	.wp-block-kontakt-form .wp-block-field-name,
-	.wp-block-kontakt-form .wp-block-field-telephone {
+	.wp-block-kontakt-form .wp-block-kontakt-form__name,
+	.wp-block-kontakt-form .wp-block-kontakt-form__telephone {
 		padding-right: 2%;
 		float: left;
 	}
 
-	.wp-block-kontakt-form .wp-block-field-email,
-	.wp-block-kontakt-form .wp-block-field-company {
+	.wp-block-kontakt-form .wp-block-kontakt-form__email,
+	.wp-block-kontakt-form .wp-block-kontakt-form__company {
 		padding-left: 2%;
 		float: right;
 	}
