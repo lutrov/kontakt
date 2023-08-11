@@ -6,7 +6,7 @@ Plugin URI: https://github.com/lutrov/kontakt
 Description: Kontakt is a simple contact form that allows you to capture a name, email, telephone, company and message. No fancy form builder, no advanced conditional logic, just the basics. Allows you to block spambots without using annoying captchas and optionally stores messages as private custom post types in the database. Why this plugin name? Kontakt means "contact" in Polish.
 Author: Ivan Lutrov
 Author URI: http://lutrov.com/
-Version: 6.1
+Version: 6.2
 */
 
 defined('ABSPATH') || die();
@@ -846,7 +846,7 @@ function kontakt_shortcode($atts) {
 		if (in_array('name', $fields) == true) {
 			array_push(
 				$form['markup'],
-				'<div class="wp-block-field-name">'
+				'<div class="wp-block-kontakt-form__name">'
 			);
 			if (in_array('name', $required) == true) {
 				array_push(
@@ -891,7 +891,7 @@ function kontakt_shortcode($atts) {
 		if (in_array('email', $fields) == true) {
 			array_push(
 				$form['markup'],
-				'<div class="wp-block-field-email">'
+				'<div class="wp-block-kontakt-form__email">'
 			);
 			if (in_array('email', $required) == true) {
 				array_push(
@@ -936,7 +936,7 @@ function kontakt_shortcode($atts) {
 		if (in_array('telephone', $fields) == true) {
 			array_push(
 				$form['markup'],
-				'<div class="wp-block-field-telephone">'
+				'<div class="wp-block-kontakt-form__telephone">'
 			);
 			if (in_array('telephone', $required) == true) {
 				array_push(
@@ -981,7 +981,7 @@ function kontakt_shortcode($atts) {
 		if (in_array('company', $fields) == true) {
 			array_push(
 				$form['markup'],
-				'<div class="wp-block-field-company">'
+				'<div class="wp-block-kontakt-form__company">'
 			);
 			if (in_array('company', $required) == true) {
 				array_push(
@@ -1026,7 +1026,7 @@ function kontakt_shortcode($atts) {
 		if (in_array('message', $fields) == true) {
 			array_push(
 				$form['markup'],
-				'<div class="wp-block-field-message">'
+				'<div class="wp-block-kontakt-form__message">'
 			);
 			if (in_array('message', $required) == true) {
 				array_push(
@@ -1073,7 +1073,7 @@ function kontakt_shortcode($atts) {
 				$question = sprintf('%s?', trim(strtok($quiz, '?')));
 				array_push(
 					$form['markup'],
-					'<div class="wp-block-field-quiz">'
+					'<div class="wp-block-kontakt-form__quiz">'
 				);
 				if (in_array('quiz', $required) == true) {
 					array_push(
@@ -1119,7 +1119,7 @@ function kontakt_shortcode($atts) {
 		if (in_array('agreement', $fields) == true) {
 			array_push(
 				$form['markup'],
-				'<div class="wp-block-field-agreement">'
+				'<div class="wp-block-kontakt-form__agreement">'
 			);
 			if (empty($agreement) == false) {
 				$page = get_page_by_path($agreement);
@@ -1184,7 +1184,7 @@ function kontakt_shortcode($atts) {
 		);
 		array_push(
 			$form['markup'],
-			sprintf('<div class="wp-block-button">')
+			sprintf('<div class="wp-block-kontakt-form__submit">')
 		);
 		array_push(
 			$form['markup'],
