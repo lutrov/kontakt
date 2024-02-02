@@ -247,14 +247,14 @@ You can customise the way the contact form looks by adding something like this t
 }
 
 .wp-block-kontakt-form label span.required {
-	color: var(--wp--preset--color--vivid-red);
+	color: red;
 }
 
 .wp-block-kontakt-form input[type="text"],
 .wp-block-kontakt-form input[type="email"],
 .wp-block-kontakt-form input[type="tel"],
 .wp-block-kontakt-form textarea {
-	border: 2px solid var(--wp--preset--color--contrast);
+	border: 2px solid black;
 	outline: none;
 }
 
@@ -262,26 +262,24 @@ You can customise the way the contact form looks by adding something like this t
 .wp-block-kontakt-form input[type="email"].error,
 .wp-block-kontakt-form input[type="tel"].error,
 .wp-block-kontakt-form textarea.error {
-	border-color: var(--wp--preset--color--vivid-red);
+	border-color: red;
 }
 
 .wp-block-kontakt-form input[type="text"]:focus,
 .wp-block-kontakt-form input[type="email"]:focus,
 .wp-block-kontakt-form input[type="tel"]:focus,
 .wp-block-kontakt-form textarea:focus {
-	border-color: var(--wp--preset--color--contrast);
+	border-color: blue;
 }
 
-.wp-block-kontakt-form .wp-block-button input[type="submit"] {
+.wp-block-kontakt-form input[type="submit"] {
 	margin-top: 20px;
-	border-radius: 4px;
 	min-width: 160px;
-	font-size: var(--wp--preset--font-size--medium);
 }
 
 .wp-block-kontakt-form p.error {
 	margin-top: 10px;
-	color: var(--wp--preset--color--vivid-red);
+	color: red;
 }
 
 .wp-block-kontakt-form p.message {
